@@ -1,0 +1,56 @@
+{
+    "en": {
+        "DATE":"DATE",
+        "Order No":"Order No",
+        "Your Trip":"Your Trip",
+        "From":"From",
+        "To":"To",
+        "Cancel":"Cancel",
+        "Driver Details":"Driver Details",
+        "Name":"Name",
+        "Car Model":"Car Color",
+        "Approve":"Approve",
+        "Reject":"Reject",
+        "Accepted":"Searching for a driver",
+        "Waiting Driver Approve":"Waiting Driver Approve",
+        "On the way":"On the way",
+        "Waiting Customer Approve":"Waiting Customer Approve",
+        "Done":"Done",
+        "Office Rejected":"Office Rejected",
+        "Customer Rejected":"Customer Rejected",
+        "No-Res. from Customer":"No-Res. from Customer",
+        "Canceled":"Canceled",
+        "Canceled from Customer":"Canceled from Customer",
+        "New":"New",
+        "Note":"Note"
+
+    },
+    "ar": {
+        "DATE":"تاريخ",
+         "Order No":"رقم الطلب",
+        "Your Trip":"رحلتك",
+        "From":"من",
+        "To":"الى",
+        "Cancel":"إلغاء",
+        "Driver Details":"تفاصيل السائق",
+        "Name":"اسم",
+        "Car Model":"لون السيارة",
+        "Approve":"وافق",
+        "Reject":"رفض",
+        "Accepted":"بحث الان عن سائق..",
+        "Waiting Driver Approve":"في انتظار موافقة السائق",
+        "On the way":"على الطريق",
+        "Waiting Customer Approve":"في انتظار موافقة العميل",
+        "Done":"منجز",
+        "Office Rejected":"رفض المكتب",
+        "Customer Rejected":"رفض العميل",
+        "No-Res. from Customer":"لا يوجد رد من العميل",
+        "Canceled":"ملغى",
+        "Canceled from Customer":"تم الالغاء من العميل",
+        "New":"جديد",
+        "Note":"ملاحظات"
+    }
+
+
+
+}
