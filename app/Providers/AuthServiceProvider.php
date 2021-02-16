@@ -35,7 +35,13 @@ class AuthServiceProvider extends ServiceProvider
             'manageDriver',
             'manageSetting',
             'manageUser',
-            'viewUser'
+            'viewUser',
+            'viewTransaction',
+            'manageTransaction',
+            'manageVehicle',
+            'viewVehicle',
+            'manageService',
+            'viewService',
 
         ])->each(function ($permission) {
             Gate::define($permission, function ($user) use ($permission) {

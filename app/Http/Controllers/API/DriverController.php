@@ -48,6 +48,8 @@ class DriverController extends Controller
         $driver->distance = $distance;
         $driver->save();
 
+
+
         Stream::create([
             'pid' => $driver->id,
             'model' => 'Driver',

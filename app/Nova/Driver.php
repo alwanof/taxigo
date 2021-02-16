@@ -10,6 +10,7 @@ use App\Nova\Lenses\OrderOfficeLense;
 use App\Order;
 use App\Parse\User as ParseUser;
 use App\User;
+use App\Vehicle;
 use Bissolli\NovaPhoneField\PhoneNumber;
 use Ctessier\NovaAdvancedImageField\AdvancedImage;
 use Illuminate\Http\Request;
@@ -20,9 +21,12 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Opanegro\FieldNovaPasswordShowHide\FieldNovaPasswordShowHide;
 use Illuminate\Support\Str;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
+use Nikaia\Rating\Rating;
 
 class Driver extends Resource
 {
@@ -48,7 +52,7 @@ class Driver extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'taxiNo'
+        'id', 'name', 'email', 'taxiNo'
     ];
     /**
      * Get the displayable label of the resource.
@@ -85,6 +89,17 @@ class Driver extends Resource
             Text::make(__('Name'), 'name')
                 ->sortable()
                 ->rules('required', 'max:255'),
+            Select::make(__('Vehicle'), 'vehicle_id')->options(function () {
+                $options = [];
+                $vehicles = Vehicle::withoutGlobalScope('ref')
+                    ->where('user_id', auth()->user()->id)
+                    ->orWhere('user_id', auth()->user()->ref)
+                    ->get();
+                foreach ($vehicles as $vehicle) {
+                    $options[$vehicle->id] = $vehicle->title;
+                }
+                return $options;
+            })->onlyOnForms(),
             Text::make(__('Taxi'), 'taxi')
                 ->rules('required', 'max:255'),
             Text::make(__('TaxiNo'), 'taxiNo')
@@ -109,7 +124,21 @@ class Driver extends Resource
             Text::make(__('TaxiColor'), 'taxiColor')
                 ->rules('required', 'max:25')
                 ->hideFromIndex(),
-
+            Select::make(__('Luggage'), 'luggage')->options(function () {
+                return [
+                    'N' => __('Normal'),
+                    'B' => __('Big'),
+                ];
+            })->hideFromIndex()->default('N'),
+            Select::make(__('Pet_friendly '), 'pet_friendly ')->options(function () {
+                return [
+                    'NO' => __('None'),
+                    'C' => __('Cage'),
+                    'L' => __('Leash'),
+                ];
+            })->hideFromIndex()->default('NO'),
+            Boolean::make(__('Protection '), 'protection ')->hideFromIndex()->withMeta(["value" => 0]),
+            Boolean::make(__('child_seat'), 'child_seat  ')->hideFromIndex()->withMeta(["value" => 0]),
             Text::make(__('Busy'), function () {
                 return $this->driverStatus();
             })
@@ -123,13 +152,25 @@ class Driver extends Resource
                 }
             })
                 ->onlyOnDetail(),
-            Number::make(__('Distance'), 'distance')
+            Number::make(__('Distance'), 'distance', function () {
+                return $this->distance . ' km';
+            })
                 ->onlyOnIndex(),
+            Text::make(__('Vehicle'), 'vehicle_id', function () {
+                return Vehicle::withoutGlobalScope('ref')->find($this->vehicle_id)->title;
+            })->sortable()->onlyOnIndex(),
+
+            Rating::make(__('Rating'), 'rating')
+                ->min(0)->max(5)->increment(0.5)
+                ->onlyOnIndex()->sortable()
+                ->withStyles([
+                    'star-size' => 15,
+                ]),
 
 
-            /*Boolean::make(__('Active'), 'active')
-                ->hideWhenCreating(),*/
-            HasMany::make(__('Orders'), 'orders', 'App\Nova\Order')
+            HasMany::make(__('Transactions'), 'transactions', 'App\Nova\Transaction'),
+            HasMany::make(__('Orders'), 'orders', 'App\Nova\Order'),
+
         ];
     }
 
@@ -183,7 +224,7 @@ class Driver extends Resource
     public function actions(Request $request)
     {
         return [
-            //(new ActiveOperator())->onlyOnDetail(),
+            (new ActiveOperator())->onlyOnDetail(),
             (new SendCredentionalAction()),
         ];
     }

@@ -11,6 +11,7 @@
         <form class="form-signin was-validated text-center" action="{{ route('client.composse') }}" method="POST">
 
             @csrf
+            <input type="hidden" name="session" value="{{ $order['service'] }}">
             <input type="hidden" name="from_lat" value="{{ $order['from_lat'] }}">
             <input type="hidden" name="from_lng" value="{{ $order['from_lng'] }}">
 

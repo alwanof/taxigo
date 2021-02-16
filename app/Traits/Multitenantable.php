@@ -98,7 +98,8 @@ trait Multitenantable
                     } else {
                         switch ($level) {
                             case 1:
-                                $builder->where('parent', auth()->id());
+                                $builder->where('parent', auth()->id())
+                                    ->orWhere('user_id', auth()->id());
                                 break;
                             case 2:
                                 $builder->where('user_id', auth()->id());

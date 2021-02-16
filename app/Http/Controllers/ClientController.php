@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Driver;
 use App\Order;
+use App\Parse\Stream;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -81,6 +82,7 @@ class ClientController extends Controller
 
 
         $office = User::where('email', $office_email)->firstOrFail();
+
         $lang = $this->getLang($office->settings['lang']);
 
         if ($office->level != 2) abort(404);
@@ -98,82 +100,73 @@ class ClientController extends Controller
 
         $hash = explode('%&', $request->hash);
         $office = User::findOrFail($hash[0]);
+        $lang = $this->getLang($office->settings['lang']);
         $agent = User::findOrFail($hash[2]);
         $session = session()->getId();
         $oldOrder = Order::where('session', $session)
-            ->whereNotIn('status', [9, 91, 92, 93, 94, 95, 99])
+            ->whereNotIn('status', [9, 91, 92, 93, 94, 95, 99, 90])
             ->count();
+        // Oops I'v found an old order running
         if ($oldOrder > 0) {
-
             $order = $oldOrder = Order::where('session', $session)->firstOrFail();
-            $lang = $this->getLang($office->settings['lang']);
             return view('client.order', compact(['office', 'agent', 'order', 'lang']));
-        } else {
-
-            $order = Order::create(
-                [
-                    'session' => $request->session,
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'phone' => $request->phone,
-                    'from_address' => $request->from_address,
-                    'from_lat' => $request->from_lat,
-                    'from_lng' => $request->from_lng,
-                    'to_address' => ($request->to_address) ? $request->to_address : null,
-                    'to_lat' => ($request->to_lat) ? $request->to_lat : null,
-                    'to_lng' => ($request->to_lng) ? $request->to_lng : null,
-                    'user_id' => $office->id,
-                    'parent' => $agent->id,
-                    'status' => 0,
-                    'note' => $request->note
-                ]
-            );
         }
-
-        if ($office->settings['auto_fwd_order']) {
-            $block = explode('--', $order->block);
-            $driver = Driver::where('user_id', $order->user_id)
-                ->where('busy', 0)
-                ->whereNotIn('id', $block)
-                ->inRandomOrder()
-                ->first();
-            if ($driver) {
-                $order->driver_id = $driver->id;
-                $order->status = 2;
-                $order->save();
-            } else {
-                $order->status = 91;
-                $order->save();
-            }
-            $response = Http::withHeaders([
-                'X-Parse-Application-Id' => 'REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV',
-                'X-Parse-REST-API-Key' => 'ozmiEzNHJIAb3EqCD9lislhOC5dPsC0OS18DFJ6j',
-                'Content-Type' => 'application/json'
-            ])->post('https://parseapi.back4app.com/functions/stream', [
-                'pid' => $order->id,
-                'model' => 'Order',
-                'action' => 'C',
-                'meta' => ['hash' => $driver->hash, 'office' => $office->id, 'agent' => $agent->id, 'action' => 'create']
-
-            ]);
-            $this->sendMobileNoti('New Order!', 'You have been got a new order', $driver->hash);
-        } else {
-            $response = Http::withHeaders([
-                'X-Parse-Application-Id' => 'REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV',
-                'X-Parse-REST-API-Key' => 'ozmiEzNHJIAb3EqCD9lislhOC5dPsC0OS18DFJ6j',
-                'Content-Type' => 'application/json'
-            ])->post('https://parseapi.back4app.com/functions/stream', [
-                'pid' => $order->id,
-                'model' => 'Order',
-                'action' => 'C',
-                'meta' => ['office' => $office->id, 'agent' => $agent->id, 'action' => 'create']
-
-            ]);
-        }
-
-
-        $lang = $this->getLang($office->settings['lang']);
+        // Create a new Order
+        $order = Order::create(
+            [
+                'session' => $request->session,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'from_address' => $request->from_address,
+                'from_lat' => $request->from_lat,
+                'from_lng' => $request->from_lng,
+                'to_address' => ($request->to_address) ? $request->to_address : null,
+                'to_lat' => ($request->to_lat || ($request->to_lat != $request->from_lat)) ? $request->to_lat : 0,
+                'to_lng' => ($request->to_lng || ($request->to_lng != $request->from_lng)) ? $request->to_lng : 0,
+                'service_id' => $request->service,
+                'user_id' => $office->id,
+                'parent' => $agent->id,
+                'status' => 0,
+                'note' => $request->note
+            ]
+        );
         return view('client.order', compact(['office', 'agent', 'order', 'lang']));
+
+        // Oh I found forward function is running
+        /*if ($office->settings['auto_fwd_order']) {
+            $this->forwardOrder($agent, $office, $order);
+            return view('client.order', compact(['office', 'agent', 'order', 'lang']));
+        }*/
+        //Stream
+
+
+    }
+
+    private function forwardOrder($agent, $office, $order)
+    {
+        $block = explode('--', $order->block);
+        $driver = Driver::where('user_id', $order->user_id)
+            ->where('busy', 0)
+            ->whereNotIn('id', $block)
+            ->inRandomOrder()
+            ->first();
+        if ($driver) {
+            $order->driver_id = $driver->id;
+            $order->status = 2;
+            $order->save();
+        } else {
+            $order->status = 91;
+            $order->save();
+        }
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'C',
+            'meta' => ['hash' => $driver->hash, 'office' => $office->id, 'agent' => $agent->id, 'action' => 'create']
+        ]);
+
+        $this->sendMobileNoti('New Order!', 'You have been got a new order', $driver->hash);
     }
 
 

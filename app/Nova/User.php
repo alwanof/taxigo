@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Driver;
 use App\Nova\Actions\TestActionn;
 use App\Nova\Lenses\OrdersARLense;
+use App\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Nova\Fields\Avatar;
@@ -134,7 +135,9 @@ class User extends Resource
             BelongsTo::make(__('Ref'), 'main', User::class)->hideWhenCreating()->hideWhenUpdating(),
             BelongsToMany::make(__('Roles'), 'roles', Role::class),
             HasMany::make(__('Orders'), 'orders', Order::class),
-            HasMany::make(__('Children'), 'children', User::class)->hideWhenCreating()->hideWhenUpdating()
+            HasMany::make(__('Transactions'), 'transactions', Transaction::class),
+            HasMany::make(__('Children'), 'children', User::class)->hideWhenCreating()->hideWhenUpdating(),
+
 
         ];
     }

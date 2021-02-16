@@ -60,7 +60,7 @@ Route::get('/app/get/order/{hash}', 'API\OrderController@getDriverOrder');
 Route::get('/app/approve/{order_id}', 'API\OrderController@driverApproveOrder');
 
 Route::get('/app/{hash}/reject/{order_id}', 'API\OrderController@driverRejectOrder');
-
+Route::get('/app/{hash}/start/{order_id}', 'API\OrderController@driverStartOrder'); //new
 Route::get('/app/{hash}/done/{order_id}', 'API\OrderController@driverCompleteOrder');
 
 Route::get('/app/{hash}/tracking/{lat}/{lng}', 'API\DriverController@tracking');

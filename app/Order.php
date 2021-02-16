@@ -14,14 +14,15 @@ class Order extends Model
 
     // 0 new
     //Office: 1=> S D | 12 => Send Offer
-    //Driver: 2 => Y/N option | 21 on the way
+    //Driver: 2 => Y/N option | 21 on the way | 22 start trip
+
     //Customer: 3 => Y/N option
-    //Done 9=> done | 91=> RO | 92=>RC | 93=>NoRO | 94=>NoRC 99=>CC
+    //Done 9=> done | 91=> RO | 92=>RC | 93=>NoRO | 94=>NoRC 99=>CC | 90 failed
 
     //emos_murad emos_taxidb
     // ssh root@142.93.174.231
     //#!S_~2-0-2-1/A*M*T%o%t%i%l+!
-    // cd /home/marasiel.com/public_html
+    // cd /home/emostaxi.com/public_html
     //rm -rf storage
     // scp narabana.com.zip root@142.93.174.231:/home/narabana.com/public_html
     //Zoom+9314MU
@@ -79,6 +80,10 @@ class Order extends Model
     {
         return $this->belongsTo(Driver::class);
     }
+    public function subscribers()
+    {
+        return $this->belongsToMany(Driver::class, 'driver_order');
+    }
 
     public function office()
     {
@@ -88,9 +93,24 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'parent');
     }
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 
     public function getCreatedAtAttribute($date)
     {
         return Carbon::parse($date)->format('d-M-Y H:i:s');
+    }
+
+    public function orderTotal($d, $t)
+    {
+        $orderPrice = 0;
+        if ($this->service) {
+            if ($this->service->plane == 'TRACK') {
+                $orderPrice = (($d / 1000) * $this->service->distance) + (($t / 60) * $this->service->time) + $this->service->const;
+            }
+        }
+        return round($orderPrice, 2);
     }
 }

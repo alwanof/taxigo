@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b6147a152b78db5221c8270b9358ec9",
+    "content-hash": "9ff27a47a7b6ad114a7c4ffdadfb99e5",
     "packages": [
         {
             "name": "ampeco/nova-date-range-filter",
@@ -2701,6 +2701,57 @@
                 }
             ],
             "time": "2020-11-28T14:25:28+00:00"
+        },
+        {
+            "name": "nikaia/nova-rating-field",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikaia/nova-rating-field.git",
+                "reference": "6db4fdf4fc1177af401645149cda814f1fce27c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikaia/nova-rating-field/zipball/6db4fdf4fc1177af401645149cda814f1fce27c3",
+                "reference": "6db4fdf4fc1177af401645149cda814f1fce27c3",
+                "shasum": ""
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.11"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nikaia\\Rating\\RatingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nikaia\\Rating\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nassif Bourguig",
+                    "email": "nbourguig@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Add start rating field to Laravel Nova",
+            "homepage": "https://github.com/nikaia/nova-rating-field",
+            "keywords": [
+                "Rating",
+                "field",
+                "laravel",
+                "nova"
+            ],
+            "time": "2019-12-24T07:19:41+00:00"
         },
         {
             "name": "nikic/php-parser",

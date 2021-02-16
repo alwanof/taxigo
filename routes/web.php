@@ -5,6 +5,7 @@ use App\Notifications\SendCredentials;
 use App\Order;
 use App\Parse\User as ParseUser;
 use App\Role;
+use App\Service;
 use App\Setting;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -30,14 +31,17 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-    //$user = ParseUser::find('uiHronA7Tj');
-    $user = new ParseUser();
-    $user->username = 'OOPOOP1';
-    $user->password = '12345678';
-    $user->name = 'OOPOOP1';
-    $user->save();
-
-    return $user;
+    $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+        'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
+        'language' => 'en-US',
+        'mode' => 'DRIVING',
+        'origins' => '41.012774,28.920291',
+        'destinations' => '41.122774,28.961291',
+    ]);
+    if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
+        return $response['rows'][0];
+    }
+    return 99;
 });
 
 Route::get('/set/lang/{lang}', 'ClientController@setLang')->name('client.lang');

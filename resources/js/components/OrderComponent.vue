@@ -215,12 +215,18 @@ var subscription = Client.subscribe(query);
                     case 21:
                         label=this.trans('On the way');
                         break;
+                    case 22:
+                        label=this.trans('Trip Started');
+                    break;
                     case 3:
                         label=this.trans('Waiting Customer Approve');
                         break;
                     case 9:
                         label=this.trans('Done');
                         break;
+                    case 90:
+                        label=this.trans('Trip Failed');
+                    break;
                     case 91:
                         label=this.trans('Office Rejected');
                         break;
@@ -260,11 +266,17 @@ var subscription = Client.subscribe(query);
                     case 21:
                         icon='fas fa-car';
                         break;
+                    case 22:
+                        icon='far fa-caret-square-right';
+                        break;
                     case 3:
                         icon='fas fa-user-clock';
                         break;
                     case 9:
                         icon='fas fa-check-double';
+                        break;
+                    case 90:
+                        icon='fas fa-exclamation-triangle';
                         break;
                     case 91:
                         icon='fas fa-minus-circle';

@@ -15,66 +15,72 @@
 
         </h1>
 
-        @if (!$office->settings['auto_fwd_order'] && $office->settings['offer_enabled'])
-            <form class="form-signin was-validated text-center" action="{{ route('client.dist') }}" method="POST">
-            @else
-                <form class="form-signin was-validated text-center" action="{{ route('client.composse') }}" method="POST">
-        @endif
+        <form class="form-signin was-validated text-center" action="{{ route('client.dist') }}" method="POST">
+            @csrf
+            @foreach ($office->services as $service)
+                <div class="form-check form-check-inline bg-white border p-2">
+                    <img class="img-fluid m-2" src="/storage/{{ $service->vehicle->avatar }}" alt="" width="42">
 
+                    <div>
+                        <input class="form-check-input" type="radio" name="service" value="{{ $service->id }}" required>
+                        <label class="form-check-label">{{ $service->title }}</label>
+                    </div>
 
-
-
-        @csrf
-        <input type="hidden" name="from_lat" id="from_lat">
-        <input type="hidden" name="from_lng" id="from_lng">
-
-        <input type="hidden" name="session" value="{{ $session }}">
-        <input type="hidden" name="hash" value="{{ $office->id . '%&' . $session . '%&' . $agent->id }}">
-
-        <div class="form-group">
-
-            <input type="text" class="form-control" placeholder="{{ __('app.Enter your name') }}" name="name" required>
-            <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-        </div>
-        <div class="form-group">
-
-            <input type="text" class="form-control" placeholder="{{ __('app.Enter your phone') }}" name="phone" required>
-            <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-        </div>
-        <div class="form-group">
-
-            <input type="text" class="form-control" placeholder="{{ __('app.Enter your email') }}" name="email" required>
-            <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-        </div>
-        <div class="form-group">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">
-                        <i class="fas fa-map-marker-alt text-primary" id="confirmSource"></i>
-                    </span>
                 </div>
-                <textarea type="text" class="form-control"
-                    style="border: solid 1px #ced4da;background-color:#e9ecef;obacity:1" placeholder="Enter your address"
-                    id="from_address" name="from_address" required readonly>
+            @endforeach
+            <input type="hidden" name="from_lat" id="from_lat">
+            <input type="hidden" name="from_lng" id="from_lng">
 
-                                                                                            </textarea>
-                <div style="display: block;width:100%;color:green">
-                    {{ __('app.Address hint1') }}
-                    <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}
+            <input type="hidden" name="session" value="{{ $session }}">
+            <input type="hidden" name="hash" value="{{ $office->id . '%&' . $session . '%&' . $agent->id }}">
+
+            <div class="form-group">
+
+                <input type="text" class="form-control" placeholder="{{ __('app.Enter your name') }}" name="name"
+                    required>
+                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
+            </div>
+            <div class="form-group">
+
+                <input type="text" class="form-control" placeholder="{{ __('app.Enter your phone') }}" name="phone"
+                    required>
+                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
+            </div>
+            <div class="form-group">
+
+                <input type="text" class="form-control" placeholder="{{ __('app.Enter your email') }}" name="email"
+                    required>
+                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
+            </div>
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-map-marker-alt text-primary" id="confirmSource"></i>
+                        </span>
+                    </div>
+                    <textarea type="text" class="form-control"
+                        style="border: solid 1px #ced4da;background-color:#e9ecef;obacity:1"
+                        placeholder="Enter your address" id="from_address" name="from_address" required readonly>
+
+                                                                                                                                                                                                            </textarea>
+                    <div style="display: block;width:100%;color:green">
+                        {{ __('app.Address hint1') }}
+                        <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}
+                    </div>
+                    <div id="source"></div>
+
                 </div>
-                <div id="source"></div>
+
 
             </div>
 
 
-        </div>
-
-
-        @if (!$office->settings['auto_fwd_order'] && $office->settings['offer_enabled'])
-            <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.Continue') }}</button>
-        @else
-            <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.SUBMIT') }}</button>
-        @endif
+            @if (!$office->settings['auto_fwd_order'] && $office->settings['offer_enabled'])
+                <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.Continue') }}</button>
+            @else
+                <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.SUBMIT') }}</button>
+            @endif
 
 
         </form>

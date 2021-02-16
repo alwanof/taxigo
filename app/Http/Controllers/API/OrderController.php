@@ -273,6 +273,21 @@ class OrderController extends Controller
         return response(1, 200);
     }
 
+    public function driverStartOrder($order_id)
+    {
+        $order = Order::findOrFail($order_id);
+        $order->status = 22;
+        $order->save();
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'U',
+            'meta' => ['office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
+        ]);
+
+        return response(1, 200);
+    }
+
     public function driverRejectOrder($hash, $order_id)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();

@@ -131,6 +131,13 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'user_id');
     }
 
+    public function services()
+    {
+        return $this->hasMany(Service::class, 'user_id');
+    }
+
+
+
     public function children()
     {
         return $this->hasMany(User::class, 'ref');
@@ -156,5 +163,10 @@ class User extends Authenticatable
             }
         }
         return false;
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

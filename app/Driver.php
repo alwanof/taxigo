@@ -16,4 +16,20 @@ class Driver extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function requests()
+    {
+
+        return $this->belongsToMany(Order::class, 'driver_order');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
 }

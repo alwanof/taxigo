@@ -451,7 +451,7 @@
     "Busy":"Status Now",
     "Distance":"Distance",
     "Send Credentional Email":"Send Credentional Email",
-    "De/Activate":"De/Activate",
+    "De/Activate":"Synchronize",
     "Current Orders":"Current Orders",
     "Auto-Forward":"Auto-Forward",
     "Customer":"Customer",
@@ -492,7 +492,10 @@
     "Offline":"Offline",
     "BusyNow":"BusyNow",
     "Free":"Free",
-    "DriverSerching":"Searching for a driver"
+    "DriverSerching":"Searching for a driver",
+    "Trip Started":"Trip Started",
+    "Trip Failed":"Trip Failed"
+
 
 
 }
