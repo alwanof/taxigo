@@ -22,7 +22,7 @@ class Order extends Model
     //emos_murad emos_taxidb
     // ssh root@142.93.174.231
     //#!S_~2-0-2-1/A*M*T%o%t%i%l+!
-    // cd /home/emostaxi.com/public_html
+    // cd /home/2axigo.com/public_html
     //rm -rf storage
     // scp narabana.com.zip root@142.93.174.231:/home/narabana.com/public_html
     //Zoom+9314MU
