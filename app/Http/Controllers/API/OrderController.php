@@ -273,7 +273,7 @@ class OrderController extends Controller
         return response(1, 200);
     }
 
-    public function driverStartOrder($order_id)
+    public function driverStartOrder($hash, $order_id)
     {
         $order = Order::findOrFail($order_id);
         $order->status = 22;
@@ -339,6 +339,9 @@ class OrderController extends Controller
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $order = Order::findOrFail($order_id);
+        /*if($order->service->plan=='TRACK'){
+
+        }*/
         $order->status = 9;
         $order->save();
 
