@@ -240,10 +240,8 @@ class OrderController extends Controller
     public function getDriverOrder($hash)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
-        $pendingOrder = Order::whereIn([
-            'driver_id' => $driver->id,
-            'status' => [21, 22]
-        ]);
+        $pendingOrder = Order::where('driver_id', $driver->id,)
+            ->whereIn('status', [21, 22]);
         if ($pendingOrder->count() > 0) {
             return $pendingOrder->first();
         }
