@@ -26,6 +26,7 @@ class Order extends Model
     //rm -rf storage
     // scp narabana.com.zip root@142.93.174.231:/home/narabana.com/public_html
     //Zoom+9314MU
+    //6390 0414 9648 7280
     use Multitenantable;
 
     protected $fillable = [

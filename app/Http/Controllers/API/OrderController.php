@@ -337,9 +337,7 @@ class OrderController extends Controller
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $order = Order::findOrFail($order_id);
-        /*if($order->service->plan=='TRACK'){
-
-        }*/
+        $order->total = $order->orderTotal($order->distance, $order->duration);
         $order->status = 9;
         $order->save();
 
@@ -357,8 +355,20 @@ class OrderController extends Controller
             'action' => 'U',
             'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
         ]);
+        $responseCode = 1; // 1 NONE , 2 OFFER , 3 DRIVER , 4 TRACK;
+        switch ($order->service->plan) {
+            case 'OFFER':
+                $responseCode = 2;
+                break;
+            case 'DRIVER':
+                $responseCode = 3;
+                break;
+            case 'TRACK':
+                $responseCode = 4;
+                break;
+        }
 
-        return response(1, 200);
+        return response($responseCode, 200);
     }
 
     private function sendMobileNoti($title, $body, $token)
