@@ -51,7 +51,7 @@ class DriverController extends Controller
                 'newLng' => $lng
             ];
             $order->distance = $this->orderMetric($coordinates, $order->distance);
-            $order->duration = $order->duration + diffSeconds($driver->created_at);
+            $order->duration = $order->duration + diffSeconds($driver->updated_at);
             $order->save();
         }
 
