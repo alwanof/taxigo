@@ -40,6 +40,23 @@ class DriverController extends Controller
 
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $office = User::find($driver->user_id);
+        $order = Order::where('driver_id', $driver->id)
+            ->where('status', 22)
+            ->first();
+        if ($order) {
+            $coordinates = [
+                'oldLat' => $driver->lat,
+                'oldLng' => $driver->lng,
+                'newLat' => $lat,
+                'newLng' => $lng
+            ];
+            $order->distance = $this->orderMetric($coordinates, $order->distance);
+            $order->duration = $order->duration + diffSeconds($driver->created_at);
+            $order->save();
+        }
+
+
+        //Update driver coordinates
         $olat = $office->settings['coordinate_lat'];
         $olng = $office->settings['coordinate_lng'];
         $distance = cooDistance($olat, $olng, $lat, $lng);
@@ -58,6 +75,7 @@ class DriverController extends Controller
         ]);
         return response(1, 200);
     }
+
     public function checkStatus($hash)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
@@ -104,5 +122,13 @@ class DriverController extends Controller
             'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
         ]);
         return response($driver->busy, 200);
+    }
+
+    private function orderMetric($coordinate, $oldDistance)
+    {
+
+        $distance = $oldDistance +
+            (cooDistance($coordinate['oldLat'], $coordinate['oldLng'], $coordinate['newLat'], $coordinate['newLng']) * 1000);
+        return round($distance, 0);
     }
 }

@@ -15,3 +15,11 @@ function cooDistance($lat_a, $lon_a, $lat_b, $lon_b)
 
     return $distance;
 }
+
+function diffSeconds($from)
+{
+    $now =  Date("Y-m-d H:i:s");
+    $fromTime  = strtotime($from);
+    $toTime = strtotime($now);
+    return $toTime - $fromTime;
+}

@@ -8,6 +8,7 @@ use App\Role;
 use App\Service;
 use App\Setting;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
@@ -31,15 +32,11 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-    $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
-        'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
-        'language' => 'en-US',
-        'mode' => 'DRIVING',
-        'origins' => '41.012774,28.920291',
-        'destinations' => '41.122774,28.961291',
-    ]);
-    if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
-        return $response['rows'][0];
+    $order = Order::where('driver_id', 6)
+        ->where('status', 22)
+        ->first();
+    if ($order) {
+        return 'ok';
     }
     return 99;
 });
