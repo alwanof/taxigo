@@ -338,23 +338,13 @@ class OrderController extends Controller
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $order = Order::findOrFail($order_id);
         $order->total = $order->orderTotal($order->distance, $order->duration);
-        $order->status = 9;
+
+        $order->status = ($order->service->plan == 'DRIVER') ? 22 : 9;
         $order->save();
 
-        $driver->busy = 2;
+        $driver->busy = ($order->service->plan == 'DRIVER') ? 1 : 2;
         $driver->save();
-        Stream::create([
-            'pid' => $order->id,
-            'model' => 'Order',
-            'action' => 'U',
-            'meta' => ['hash' => $driver->hash, 'office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
-        ]);
-        Stream::create([
-            'pid' => $driver->id,
-            'model' => 'Driver',
-            'action' => 'U',
-            'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
-        ]);
+
         $responseCode = 1; // 1 NONE , 2 OFFER , 3 DRIVER , 4 TRACK;
         switch ($order->service->plan) {
             case 'OFFER':
@@ -368,7 +358,50 @@ class OrderController extends Controller
                 break;
         }
 
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'U',
+            'meta' => ['hash' => $driver->hash, 'office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
+        ]);
+        Stream::create([
+            'pid' => $driver->id,
+            'model' => 'Driver',
+            'action' => 'U',
+            'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
+        ]);
+
         return response($responseCode, 200);
+    }
+
+    public function finalCompleteOrder($hash, $order_id, $total)
+    {
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+        $order = Order::findOrFail($order_id);
+
+        $order->status = 9;
+        $order->total = $total;
+        $order->save();
+
+        $driver->busy = 2;
+        $driver->save();
+
+
+
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'U',
+            'meta' => ['hash' => $driver->hash, 'office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
+        ]);
+        Stream::create([
+            'pid' => $driver->id,
+            'model' => 'Driver',
+            'action' => 'U',
+            'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
+        ]);
+
+        return response(1, 200);
     }
 
     private function sendMobileNoti($title, $body, $token)

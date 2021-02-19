@@ -108,7 +108,7 @@ class Order extends Model
     {
         $orderPrice = 0;
         if ($this->service) {
-            if ($this->service->plane == 'TRACK') {
+            if ($this->service->plane == 'TRACK' || $this->service->plane == 'DRIVER') {
                 $orderPrice = (($d / 1000) * $this->service->distance) + (($t / 60) * $this->service->time) + $this->service->const;
             }
         }
