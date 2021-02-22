@@ -18,7 +18,7 @@ class OrderObserver
     public function created(Order $order)
     {
         // calculating Estimated (Distance , Time , Price)
-        if ($order->from_lat > 1 && $order->from_lng > 1  && $order->to_lat > 1 && $order->to_lng > 1) {
+        if ($order->from_lat != 0 && $order->from_lng != 0   && $order->to_lat != 0  && $order->to_lng != 0) {
             $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
                 'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
                 'language' => 'en-US',
@@ -26,6 +26,7 @@ class OrderObserver
                 'origins' => $order->from_lat . ',' . $order->from_lng,
                 'destinations' => $order->to_lat . ',' . $order->to_lng,
             ]);
+
             if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
                 $order->est_distance = $response['rows'][0]['elements'][0]['distance']['value'];
                 $order->est_time = $response['rows'][0]['elements'][0]['duration']['value'];

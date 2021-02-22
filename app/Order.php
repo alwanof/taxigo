@@ -14,7 +14,7 @@ class Order extends Model
 
     // 0 new
     //Office: 1=> S D | 12 => Send Offer
-    //Driver: 2 => Y/N option | 21 on the way | 22 start trip
+    //Driver: 2 => Y/N option | 21 on the way | 22 start trip | 23 start trip
 
     //Customer: 3 => Y/N option
     //Done 9=> done | 91=> RO | 92=>RC | 93=>NoRO | 94=>NoRC 99=>CC | 90 failed
@@ -40,6 +40,7 @@ class Order extends Model
         'to_address',
         'to_lat',
         'to_lng',
+        'service_id',
         'status',
         'user_id',
         'parent',
@@ -106,9 +107,9 @@ class Order extends Model
 
     public function orderTotal($d, $t)
     {
-        $orderPrice = 0;
+        $orderPrice = $this->total;
         if ($this->service) {
-            if ($this->service->plane == 'TRACK' || $this->service->plane == 'DRIVER') {
+            if ($this->service->plan == 'TRACK' || $this->service->plan == 'DRIVER') {
                 $orderPrice = (($d / 1000) * $this->service->distance) + (($t / 60) * $this->service->time) + $this->service->const;
             }
         }

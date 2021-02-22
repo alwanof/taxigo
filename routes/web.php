@@ -30,16 +30,28 @@ Route::get('/', function () {
 
     return view('welcome');
 });
+// TEST
+Route::get('/test', 'TestoController@test')->name('test.index');
+Route::post('/test', 'TestoController@create')->name('test.create');
+Route::get('/test/reset', 'TestoController@reset')->name('test.reset');
+Route::get('/test/office/accept', 'TestoController@officeAccept')->name('test.office.accept');
+Route::get('/test/office/reject', 'TestoController@officeReject')->name('test.office.reject');
+Route::get('/test/front/accept', 'TestoController@frontAccept')->name('test.front.accept');
+Route::get('/test/front/reject', 'TestoController@frontReject')->name('test.front.reject');
+Route::get('/test/driver/accept', 'TestoController@driverAccept')->name('test.driver.accept');
+Route::get('/test/driver/reject', 'TestoController@driverReject')->name('test.driver.reject');
+Route::post('/test/driver/tracking', 'TestoController@tracking')->name('test.tracking');
 
-Route::get('/test', function () {
-    $order = Order::where('driver_id', 6)
-        ->where('status', 22)
-        ->first();
-    if ($order) {
-        return 'ok';
-    }
-    return 99;
-});
+Route::post('/test/send/offer', 'TestoController@sendOffer')->name('test.send.offer');
+
+Route::post('/test/driver/take/order', 'TestoController@driverTakeOrder')->name('test.driver.take.order');
+
+Route::get('/test/order/start', 'TestoController@orderStart')->name('test.order.start');
+Route::get('/test/order/end', 'TestoController@orderEnd')->name('test.order.end');
+Route::get('/test/order/abort', 'TestoController@orderAbort')->name('test.order.abort');
+Route::post('/test/order/complete', 'TestoController@orderComplete')->name('test.order.complete');
+
+// end Test
 
 Route::get('/set/lang/{lang}', 'ClientController@setLang')->name('client.lang');
 

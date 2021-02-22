@@ -12,9 +12,6 @@ use App\Nova\Metrics\OrdersNpricedOfficeFee;
 use App\Nova\Metrics\OrdersPricedOfficeFee;
 use App\Nova\Metrics\OrderTrend;
 use App\Nova\Metrics\UserCount;
-use App\User;
-use Illuminate\Support\Facades\Gate;
-use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
 use Silvanite\NovaToolPermissions\NovaToolPermissions;
@@ -81,8 +78,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     new DriverCount(),
                     new DriverTrend(),
                     new DriverPartition(),
-                    new OrderCount(),
-                    new OrderTrend(),
+                    //new OrderCount(),
+                    //new OrderTrend(),
                 ];
                 break;
             case 1:
@@ -92,11 +89,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     new DriverCount(),
                     new DriverTrend(),
                     new DriverPartition(),
-                    new OrderCount(),
-                    new OrderTrend(),
-                    new OrdersIncome(),
-                    new OrdersPricedOfficeFee(),
-                    new OrdersNpricedOfficeFee()
+                    //new OrderCount(),
+                    //new OrderTrend(),
+                    //new OrdersIncome(),
+                    //new OrdersPricedOfficeFee(),
+                    //new OrdersNpricedOfficeFee()
                 ];
                 break;
             case 2:
@@ -105,11 +102,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     new DriverCount(),
                     new DriverTrend(),
                     new DriverPartition(),
-                    new OrderCount(),
-                    new OrderTrend(),
-                    new OrdersIncome(),
-                    new OrdersPricedOfficeFee(),
-                    new OrdersNpricedOfficeFee()
+                    //new OrderCount(),
+                    //new OrderTrend(),
+                    //new OrdersIncome(),
+                    //new OrdersPricedOfficeFee(),
+                    //new OrdersNpricedOfficeFee()
                 ];
                 break;
         }

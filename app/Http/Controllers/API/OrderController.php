@@ -223,7 +223,7 @@ class OrderController extends Controller
     {
         $order = Order::find($order);
         $order->status = 3;
-        $order->offer = round(floatVal($offer), 2);
+        $order->total = round(floatVal($offer), 2);
         $order->save();
 
         Stream::create([
@@ -241,7 +241,7 @@ class OrderController extends Controller
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $pendingOrder = Order::where('driver_id', $driver->id,)
-            ->whereIn('status', [21, 22]);
+            ->whereIn('status', [21, 22, 23]);
         if ($pendingOrder->count() > 0) {
             return $pendingOrder->first();
         }
@@ -339,8 +339,9 @@ class OrderController extends Controller
         $order = Order::findOrFail($order_id);
         $order->total = $order->orderTotal($order->distance, $order->duration);
 
-        $order->status = ($order->service->plan == 'DRIVER') ? 22 : 9;
+        $order->status = ($order->service->plan == 'DRIVER') ? 23 : 9;
         $order->save();
+
 
         $driver->busy = ($order->service->plan == 'DRIVER') ? 1 : 2;
         $driver->save();
@@ -352,6 +353,7 @@ class OrderController extends Controller
                 break;
             case 'DRIVER':
                 $responseCode = 3;
+
                 break;
             case 'TRACK':
                 $responseCode = 4;

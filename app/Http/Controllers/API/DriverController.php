@@ -38,6 +38,7 @@ class DriverController extends Controller
     public function tracking($hash, $lat, $lng)
     {
 
+
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $office = User::find($driver->user_id);
         $order = Order::where('driver_id', $driver->id)
@@ -53,6 +54,9 @@ class DriverController extends Controller
             $order->distance = $this->orderMetric($coordinates, $order->distance);
             $order->duration = $order->duration + diffSeconds($driver->updated_at);
             $order->total = $order->total + $order->orderTotal($order->distance, $order->duration);
+
+            //if ($order->service->plan != 'OFFER') {}
+
             $order->save();
         }
 
@@ -60,7 +64,7 @@ class DriverController extends Controller
         //Update driver coordinates
         $olat = $office->settings['coordinate_lat'];
         $olng = $office->settings['coordinate_lng'];
-        $distance = cooDistance($olat, $olng, $lat, $lng);
+        $distance = cooDistance($olat, $olng, $lat, $lng) * 1000;
         $driver->lat = $lat;
         $driver->lng = $lng;
         $driver->distance = $distance;
