@@ -333,6 +333,33 @@ class OrderController extends Controller
         return response(1, 200);
     }
 
+    public function driverAbortOrder($hash, $order_id)
+    {
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+
+        $order = Order::findOrFail($order_id);
+        $order->status = 90;
+        $order->save();
+
+        $driver->busy = 2;
+        $driver->save();
+
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'U',
+            'meta' => ['office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
+        ]);
+        Stream::create([
+            'pid' => $driver->id,
+            'model' => 'Driver',
+            'action' => 'U',
+            'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
+        ]);
+
+        return response(1, 200);
+    }
+
     public function driverCompleteOrder($hash, $order_id)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();

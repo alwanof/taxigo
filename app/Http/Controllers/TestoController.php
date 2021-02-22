@@ -196,7 +196,10 @@ class TestoController extends Controller
     public function orderAbort()
     {
 
-        return 1;
+        $order = Order::where('session', 'TEST')->first();
+
+        Http::get(env('APP_URL') . '/api/app/abort/order/' . $order->id)->json();
+        return redirect(route('test.index'));
     }
 
     public function driverAccept()

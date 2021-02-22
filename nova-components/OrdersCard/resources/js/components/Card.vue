@@ -145,6 +145,7 @@ export default {
     },
     created() {
         this.listen("Order");
+
     },
     methods: {
         Notify(title,body){
@@ -232,9 +233,9 @@ export default {
             Parse.serverURL = "https://smartaxi.b4a.io";
 
             var Client = new Parse.LiveQueryClient({
-                applicationId: 'REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV',
-                serverURL: 'wss://' + 'smartaxi.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
-                javascriptKey: 'VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn'
+                applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
+                serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
+                javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
             });
             const streamQuery = new Parse.Query("Stream");
             streamQuery.equalTo("model", "Order");

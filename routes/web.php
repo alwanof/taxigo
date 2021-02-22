@@ -40,6 +40,7 @@ Route::get('/test/front/accept', 'TestoController@frontAccept')->name('test.fron
 Route::get('/test/front/reject', 'TestoController@frontReject')->name('test.front.reject');
 Route::get('/test/driver/accept', 'TestoController@driverAccept')->name('test.driver.accept');
 Route::get('/test/driver/reject', 'TestoController@driverReject')->name('test.driver.reject');
+
 Route::post('/test/driver/tracking', 'TestoController@tracking')->name('test.tracking');
 
 Route::post('/test/send/offer', 'TestoController@sendOffer')->name('test.send.offer');
