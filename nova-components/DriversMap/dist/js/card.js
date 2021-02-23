@@ -57385,6 +57385,7 @@ window.Vue = __webpack_require__(358);
             Client.open();
             var subscription = Client.subscribe(query);
             subscription.on("create", function (feedDoc) {
+
                 var index = _this2.markers.findIndex(function (o) {
                     return o.id === feedDoc.attributes.pid;
                 });

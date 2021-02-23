@@ -108,6 +108,7 @@ export default {
                 Client.open();
                 var subscription = Client.subscribe(query);
                 subscription.on("create", (feedDoc) => {
+
                     let index = this.markers.findIndex(
                     (o) => o.id === feedDoc.attributes.pid
                     );
