@@ -19,7 +19,7 @@ class TestoController extends Controller
     public function run($v = 0)
     {
         //$res = Http::get(env('APP_URL') . '/api/testoo')->throw()->json();
-        $res = Http::get('https://2axigo.com/api/testoo')->throw()->json();
+        $res = Http::get(url('api/testoo'))->throw()->json();
         return $res;
         $curl = function_exists('curl_version') ? 'Enabled' : 'Disabled';
         return view('run', compact(['v', 'curl']));
