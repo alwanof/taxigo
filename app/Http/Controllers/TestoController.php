@@ -18,6 +18,16 @@ class TestoController extends Controller
     {
         $this->middleware('auth');
     }
+    public function run()
+    {
+        return view('run');
+    }
+    public function result(Request $request)
+    {
+        //return $request->all();
+        return redirect(route('test.run'));
+    }
+
     public function test()
     {
 
