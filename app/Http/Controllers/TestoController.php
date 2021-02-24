@@ -24,7 +24,7 @@ class TestoController extends Controller
     public function result(Request $request)
     {
         try {
-            $res = Http::get(env('APP_URL') . '/api/testoo')->json();
+            $res = Http::get(env('APP_URL') . '/api/testoo')->throw()->json();
         } catch (Throwable $e) {
             report($e);
 
