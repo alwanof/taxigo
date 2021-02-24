@@ -31,8 +31,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 // TEST
-Route::get('/test/run', 'TestoController@run')->name('test.run');
-Route::post('/test/result', 'TestoController@result')->name('test.result');
+Route::get('/foo/run', 'TestoController@run')->name('test.run');
+Route::post('/moo/result', 'TestoController@result')->name('test.result');
 
 Route::get('/test', 'TestoController@test')->name('test.index');
 Route::post('/test', 'TestoController@create')->name('test.create');
