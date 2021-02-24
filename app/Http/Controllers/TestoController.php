@@ -94,7 +94,7 @@ class TestoController extends Controller
             }
         }
 
-        $this->forward($order);
+        $this->forwardOrder($order);
 
         Stream::create([
             'pid' => $order->id,
