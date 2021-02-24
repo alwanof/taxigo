@@ -262,10 +262,21 @@ class OrderController extends Controller
         return $driver->requests()->where('status', 13)->first();
     }
 
-    public function driverApproveOrder($order_id)
+    public function driverApproveOrder($hash, $order_id)
     {
+        $driver = Driver::where('hash', $hash)->firstOrFail();
         $order = Order::findOrFail($order_id);
         $order->status = 21;
+        if ($order->driver_id != $driver->id) {
+            $order->driver_id = $driver->id;
+            Stream::create([
+                'pid' => $order->id,
+                'model' => 'Order',
+                'action' => 'U',
+                'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent, 'action' => 'unsubscribe']
+            ]);
+        }
+
         $order->save();
         $order->subscribers()->sync([]);
         Stream::create([
