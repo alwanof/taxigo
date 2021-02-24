@@ -14,10 +14,7 @@ use Illuminate\Support\Facades\Http;
 
 class TestoController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+
     public function run()
     {
         return view('run');
