@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <h1>Hello, world! [{{ $v }}]</h1>
+    <h1>Hello, world! [{{ $v }}] /{{ $curl }}</h1>
     <hr>
     <form action="{{ route('test.result') }}" method="POST">
         @csrf

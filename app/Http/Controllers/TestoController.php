@@ -18,7 +18,8 @@ class TestoController extends Controller
 
     public function run($v = 0)
     {
-        return view('run', compact(['v']));
+        $curl = function_exists('curl_version') ? 'Enabled' : 'Disabled';
+        return view('run', compact(['v', 'curl']));
     }
     public function result(Request $request)
     {
