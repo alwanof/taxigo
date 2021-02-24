@@ -11,19 +11,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class TestoController extends Controller
 {
 
-    public function run()
+    public function run($v = 0)
     {
-        return view('run');
+        return view('run', compact(['v']));
     }
     public function result(Request $request)
     {
+        try {
+            $res = Http::get(env('APP_URL') . '/api/testoo')->json();
+        } catch (Throwable $e) {
+            report($e);
 
-        return redirect('https://www.google.com');
+            return false;
+        }
+
+
+
+        return redirect(route('test.run', $res));
     }
+
+
 
     public function test()
     {
@@ -151,7 +163,7 @@ class TestoController extends Controller
     public function officeAccept()
     {
         $order = Order::where('session', 'TEST')->first();
-        return Http::get(env('APP_URL') . '/api/order/office/approve/' . $order->id)->json();
+        Http::get(env('APP_URL') . '/api/order/office/approve/' . $order->id)->json();
 
         return redirect(route('test.index'));
     }

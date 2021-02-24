@@ -32,7 +32,7 @@ Route::get('/', function () {
 });
 // TEST
 
-Route::get('run', 'TestoController@run')->name('test.run');
+Route::get('run/{v?}', 'TestoController@run')->name('test.run');
 Route::post('result', 'TestoController@result')->name('test.result');
 
 Route::get('/test', 'TestoController@test')->name('test.index');

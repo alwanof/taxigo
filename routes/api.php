@@ -20,7 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/testoo', function () {
+    return 9;
 });
+
+
+
+
 Route::get('/drivers/{user}', 'API\DriverController@getUserDrivers');
 
 Route::get('fetch/drivers/{driver}', 'API\DriverController@getDriver');
