@@ -21,8 +21,8 @@ class TestoController extends Controller
     }
     public function result(Request $request)
     {
-        //return $request->all();
-        return redirect(route('test.run'));
+
+        return redirect('https://www.google.com');
     }
 
     public function test()
@@ -151,7 +151,7 @@ class TestoController extends Controller
     public function officeAccept()
     {
         $order = Order::where('session', 'TEST')->first();
-        Http::get(env('APP_URL') . '/api/order/office/approve/' . $order->id)->json();
+        return Http::get(env('APP_URL') . '/api/order/office/approve/' . $order->id)->json();
 
         return redirect(route('test.index'));
     }
