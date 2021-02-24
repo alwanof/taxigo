@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <div class="container p-3">
+    <div class="container-fluid p-3">
         <h1 class="text-center m-3">Order Test Lab!</h1>
         <div class="text-center">
             <form class="row row-cols-lg-auto g-3 align-items-center" method="POST"

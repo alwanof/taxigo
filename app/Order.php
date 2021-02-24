@@ -13,7 +13,7 @@ class Order extends Model
 
 
     // 0 new
-    //Office: 1=> S D | 12 => Send Offer
+    //Office: 1=> S D | 12 => Send Offer | 13=> Forwarded
     //Driver: 2 => Y/N option | 21 on the way | 22 start trip | 23 start trip
 
     //Customer: 3 => Y/N option

@@ -62,11 +62,11 @@
                             <span class="m-2" v-if="order.status==0 || order.status==1">
                                 <button class="btn btn-default" @click="reject(order)"><i class="far fa-window-close"></i> </button>
                             </span>
-                            <span class="m-2" v-if="order.status==0 && card.authUser.settings.offer_enabled==0">
+                            <span class="m-2" v-if="order.status==0">
 
                                 <button class="btn btn-default" @click="approve(order)"><i class="far fa-check-circle"></i></button>
                             </span>
-                            <span class="m-2" v-if="order.status==0 && card.authUser.settings.offer_enabled==1 && order.to_address!=null">
+                            <span class="m-2" v-if="order.status==0 && order.service.plan=='OFFER'">
                                 <input type="number" placeholder="Ex. 50" v-model="offer" class="w-50 form-control form-input form-input-bordered">
                                 <button class="btn btn-default btn-primary mr-4" @click="sendOffer(order)">{{__("Send")}}</button>
                             </span>
@@ -404,7 +404,7 @@ export default {
                 dist = dist * 60 * 1.1515;
                 if (unit=="K") { dist = dist * 1.609344 }
                 if (unit=="N") { dist = dist * 0.8684 }
-                console.log( Math.round(dist*100)/100);
+                //console.log( Math.round(dist*100)/100);
                 return Math.round(dist*100)/100;
             }
         },

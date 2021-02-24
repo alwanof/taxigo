@@ -14,8 +14,13 @@ use Illuminate\Support\Facades\Http;
 
 class TestoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function test()
     {
+
 
         $orderKey = Order::where('session', 'TEST');
         $hasOrder = ($orderKey->count() > 0) ? true : false;
@@ -67,12 +72,11 @@ class TestoController extends Controller
                 'to_lat' => '41.008032',
                 'to_lng' => '28.9348213',
                 'service_id' => $request->service_id,
-                'user_id' => 21,
-                'parent' => 20,
                 'status' => 0,
                 'note' => 'some note test'
             ]
         );
+
         if ($order->from_lat != 0 && $order->from_lng != 0   && $order->to_lat != 0  && $order->to_lng != 0) {
             $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
                 'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
@@ -90,7 +94,31 @@ class TestoController extends Controller
             }
         }
 
+        $this->forward($order);
+
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'C',
+            'meta' => ['office' => $order->office->id, 'action' => 'create']
+        ]);
+
         return redirect(route('test.index'));
+    }
+
+    private function forwardOrder(Order $order)
+    {
+        if ($order->office->settings['auto_fwd_order']) {
+            $drivers = Driver::where([
+                'user_id' => $order->user_id,
+                'busy' => 2
+            ])->pluck('id');
+            $order->subscribers()->sync([$drivers]);
+            $order->status = 13;
+            $order->save();
+            return true;
+        }
+        return false;
     }
     public function reset()
     {

@@ -54735,7 +54735,7 @@ Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_native_notification__["a" /* default */]
                 if (unit == "N") {
                     dist = dist * 0.8684;
                 }
-                console.log(Math.round(dist * 100) / 100);
+                //console.log( Math.round(dist*100)/100);
                 return Math.round(dist * 100) / 100;
             }
         },
@@ -99198,8 +99198,7 @@ var render = function() {
                         ])
                       : _vm._e(),
                     _vm._v(" "),
-                    order.status == 0 &&
-                    _vm.card.authUser.settings.offer_enabled == 0
+                    order.status == 0
                       ? _c("span", { staticClass: "m-2" }, [
                           _c(
                             "button",
@@ -99216,9 +99215,7 @@ var render = function() {
                         ])
                       : _vm._e(),
                     _vm._v(" "),
-                    order.status == 0 &&
-                    _vm.card.authUser.settings.offer_enabled == 1 &&
-                    order.to_address != null
+                    order.status == 0 && order.service.plan == "OFFER"
                       ? _c("span", { staticClass: "m-2" }, [
                           _c("input", {
                             directives: [

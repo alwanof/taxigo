@@ -57,12 +57,15 @@ Route::get('/order/office/send/{offer}/to/{order}', 'API\OrderController@sendOff
 
 Route::get('/app/get/order/{hash}', 'API\OrderController@getDriverOrder');
 
+
 Route::get('/app/approve/{order_id}', 'API\OrderController@driverApproveOrder');
 
 Route::get('/app/{hash}/reject/{order_id}', 'API\OrderController@driverRejectOrder');
 Route::get('/app/{hash}/start/{order_id}', 'API\OrderController@driverStartOrder'); //new
 Route::get('/app/{hash}/final/{order_id}/set/{total}', 'API\OrderController@finalCompleteOrder'); //new
 Route::get('/app/abort/order/{order_id}', 'API\OrderController@driverAbortOrder'); //new
+Route::get('/app/get/feeds/{hash}', 'API\OrderController@getDriverFeed'); //new
+
 Route::get('/app/{hash}/done/{order_id}', 'API\OrderController@driverCompleteOrder');
 
 Route::get('/app/{hash}/tracking/{lat}/{lng}', 'API\DriverController@tracking');

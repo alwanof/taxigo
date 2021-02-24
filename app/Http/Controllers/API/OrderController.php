@@ -18,7 +18,7 @@ class OrderController extends Controller
         if ($user->level == 2) {
 
             return
-                Order::where('user_id', $user->id)
+                Order::with('service')->where('user_id', $user->id)
                 ->whereIn('status', [0, 1, 12, 2, 21, 3])
                 ->orderBy('updated_at', 'DESC')
                 ->get();
@@ -86,7 +86,7 @@ class OrderController extends Controller
 
     public function getOrder($order)
     {
-        $order = Order::find($order);
+        $order = Order::with('service')->find($order);
 
         return $order;
     }
@@ -256,11 +256,18 @@ class OrderController extends Controller
 
         return false;
     }
+    public function getDriverFeed($hash)
+    {
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+        return $driver->requests()->where('status', 13)->first();
+    }
+
     public function driverApproveOrder($order_id)
     {
         $order = Order::findOrFail($order_id);
         $order->status = 21;
         $order->save();
+        $order->subscribers()->sync([]);
         Stream::create([
             'pid' => $order->id,
             'model' => 'Order',
