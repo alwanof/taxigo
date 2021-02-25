@@ -63,7 +63,7 @@ Route::get('/order/office/send/{offer}/to/{order}', 'API\OrderController@sendOff
 Route::get('/app/get/order/{hash}', 'API\OrderController@getDriverOrder');
 
 
-Route::get('/app/approve/{order_id}', 'API\OrderController@driverApproveOrder');
+Route::get('/app/{hash}/approve/{order_id}', 'API\OrderController@driverApproveOrder'); //updated
 
 Route::get('/app/{hash}/reject/{order_id}', 'API\OrderController@driverRejectOrder');
 Route::get('/app/{hash}/start/{order_id}', 'API\OrderController@driverStartOrder'); //new

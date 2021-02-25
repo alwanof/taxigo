@@ -15,7 +15,11 @@
 
 <body>
     <div class="container-fluid p-3">
-        <h1 class="text-center m-3">Order Test Lab!</h1>
+        <h1 class="text-center m-3">Order Test Lab!
+            @if ($xdata['office'])
+                [{{ $xdata['office']->settings['auto_fwd_order'] ? 'Auto-Forward' : '' }}]
+            @endif
+        </h1>
         <div class="text-center">
             <form class="row row-cols-lg-auto g-3 align-items-center" method="POST"
                 action="{{ route('test.create') }}">
@@ -68,7 +72,8 @@
                                 <li class="list-group-item">ET:/{{ round($xdata['order']->est_time / 60, 0) }} min
                                 </li>
                                 <li class="list-group-item">EP:/{{ $xdata['order']->est_price }} TL</li>
-                                <li class="list-group-item">Distanse:/{{ round($xdata['order']->distance / 1000, 2) }}
+                                <li class="list-group-item">
+                                    Distanse:/{{ round($xdata['order']->distance / 1000, 2) }}
                                     km</li>
                                 <li class="list-group-item">Time:/{{ round($xdata['order']->duration / 60, 0) }} min
                                 </li>
@@ -180,9 +185,11 @@
                         @if ($xdata['order'])
                             @if ($xdata['order']->driver_id == 6)
                                 {{ $xdata['order']->driver->name }}
-                                <span class="badge bg-secondary mx-1">{{ $xdata['order']->driver->busy }}</span>
-                                <span class="badge bg-secondary mx-1">{{ $xdata['order']->driver->distance }}m</span>
+                                <span class="badge bg-secondary mx-1">B:{{ $xdata['order']->driver->busy }}</span>
+                                <span
+                                    class="badge bg-secondary mx-1">OD:{{ $xdata['order']->driver->distance }}m</span>
                             @endif
+                            <span class="badge bg-secondary mx-1">CD:{{ $xdata['distance'][0] }}m</span>
                         @endif
                     </div>
                     <div class="card-body">
@@ -209,7 +216,17 @@
                                 <li class="list-group-item">Price:/{{ $xdata['order']->total }} TL</li>
                                 @if ($xdata['order']->status == 2)
                                     <li class="list-group-item">
-                                        <a href="{{ route('test.driver.accept') }}"
+                                        <a href="{{ route('test.driver.accept', $xdata['order']->driver_id) }}"
+                                            class="btn btn-success">Accept</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.reject') }}"
+                                            class="btn  btn-danger">Reject</a>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status == 13)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.accept', $xdata['driver1']['pivot']['driver_id']) }}"
                                             class="btn btn-success">Accept</a>
                                     </li>
                                     <li class="list-group-item">
@@ -245,26 +262,28 @@
                                         </form>
                                     </li>
                                 @endif
-                                <form method="POST" action="{{ route('test.tracking') }}">
-                                    @csrf
-                                    <div class="mb-1">
-                                        <select name="loc" class="form-control">
-                                            <option value="41.0220874,28.9447355">A0</option>
-                                            <option value="41.0222871,28.9446004">A1</option>
-                                            <option value="41.0215747,28.945396">A2</option>
-                                            <option value="41.0191247,28.9405414">S0</option>
-                                            <option value="41.0153066,28.943687">S1</option>
-                                            <option value="41.0124116,28.9422497">S2</option>
-                                            <option value="41.0110715,28.941122">S3</option>
-                                            <option value="41.0109667,28.9416802">S4</option>
-                                            <option value="41.008032,28.9348213">E0</option>
-                                        </select>
-                                    </div>
+                                @if ($xdata['order']->status != 13)
+                                    <form method="POST" action="{{ route('test.tracking') }}">
+                                        @csrf
+                                        <div class="mb-1">
+                                            <select name="loc" class="form-control">
+                                                <option value="41.0220874,28.9447355">A0</option>
+                                                <option value="41.0222871,28.9446004">A1</option>
+                                                <option value="41.0215747,28.945396">A2</option>
+                                                <option value="41.0191247,28.9405414">S0</option>
+                                                <option value="41.0153066,28.943687">S1</option>
+                                                <option value="41.0124116,28.9422497">S2</option>
+                                                <option value="41.0110715,28.941122">S3</option>
+                                                <option value="41.0109667,28.9416802">S4</option>
+                                                <option value="41.008032,28.9348213">E0</option>
+                                            </select>
+                                        </div>
 
-                                    <div class="input-group-text">
-                                        <button type="submit" class="btn btn-sm btn-info">Move</button>
-                                    </div>
-                                </form>
+                                        <div class="input-group-text">
+                                            <button type="submit" class="btn btn-sm btn-info">Move</button>
+                                        </div>
+                                    </form>
+                                @endif
                             </ul>
 
                         @endif
@@ -278,11 +297,12 @@
                         @if ($xdata['order'])
                             @if ($xdata['order']->driver_id == 16)
                                 {{ $xdata['order']->driver->name }}
-                                <span class="badge bg-secondary mx-1">{{ $xdata['order']->driver->busy }}</span>
-                                <span class="badge bg-secondary mx-1">{{ $xdata['order']->driver->distance }}m</span>
+                                <span class="badge bg-secondary mx-1">B:{{ $xdata['order']->driver->busy }}</span>
+                                <span
+                                    class="badge bg-secondary mx-1">OD:{{ $xdata['order']->driver->distance }}m</span>
                             @endif
+                            <span class="badge bg-secondary mx-1">CD:{{ $xdata['distance'][1] }}m</span>
                         @endif
-
                     </div>
                     <div class="card-body">
                         @if (!$xdata['driver2'])
@@ -308,7 +328,17 @@
                                 <li class="list-group-item">Price:/{{ $xdata['order']->total }} TL</li>
                                 @if ($xdata['order']->status == 2)
                                     <li class="list-group-item">
-                                        <a href="{{ route('test.driver.accept') }}"
+                                        <a href="{{ route('test.driver.accept', $xdata['order']->driver_id) }}"
+                                            class="btn btn-success">Accept</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.reject') }}"
+                                            class="btn  btn-danger">Reject</a>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status == 13)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.accept', $xdata['driver2']['pivot']['driver_id']) }}"
                                             class="btn btn-success">Accept</a>
                                     </li>
                                     <li class="list-group-item">
@@ -344,32 +374,147 @@
                                         </form>
                                     </li>
                                 @endif
-                                <form method="POST" action="{{ route('test.tracking') }}">
-                                    @csrf
-                                    <div class="mb-1">
-                                        <select name="loc" class="form-control">
-                                            <option value="41.0220874,28.9447355">A0</option>
-                                            <option value="41.0222871,28.9446004">A1</option>
-                                            <option value="41.0215747,28.945396">A2</option>
-                                            <option value="41.0191247,28.9405414">S0</option>
-                                            <option value="41.0153066,28.943687">S1</option>
-                                            <option value="41.0124116,28.9422497">S2</option>
-                                            <option value="41.0110715,28.941122">S3</option>
-                                            <option value="41.0109667,28.9416802">S4</option>
-                                            <option value="41.008032,28.9348213">E0</option>
-                                        </select>
-                                    </div>
+                                @if ($xdata['order']->status != 13)
+                                    <form method="POST" action="{{ route('test.tracking') }}">
+                                        @csrf
+                                        <div class="mb-1">
+                                            <select name="loc" class="form-control">
+                                                <option value="41.0220874,28.9447355">A0</option>
+                                                <option value="41.0222871,28.9446004">A1</option>
+                                                <option value="41.0215747,28.945396">A2</option>
+                                                <option value="41.0191247,28.9405414">S0</option>
+                                                <option value="41.0153066,28.943687">S1</option>
+                                                <option value="41.0124116,28.9422497">S2</option>
+                                                <option value="41.0110715,28.941122">S3</option>
+                                                <option value="41.0109667,28.9416802">S4</option>
+                                                <option value="41.008032,28.9348213">E0</option>
+                                            </select>
+                                        </div>
 
-                                    <div class="input-group-text">
-                                        <button type="submit" class="btn btn-sm btn-info">Move</button>
-                                    </div>
-                                </form>
+                                        <div class="input-group-text">
+                                            <button type="submit" class="btn btn-sm btn-info">Move</button>
+                                        </div>
+                                    </form>
+                                @endif
                             </ul>
 
                         @endif
                     </div>
                 </div>
             </div>
+            <div class="div col">
+                <div class="card">
+                    <div class="card-header">
+                        Driver3:
+                        @if ($xdata['order'])
+                            @if ($xdata['order']->driver_id == 17)
+                                {{ $xdata['order']->driver->name }}
+                                <span class="badge bg-secondary mx-1">B:{{ $xdata['order']->driver->busy }}</span>
+                                <span
+                                    class="badge bg-secondary mx-1">OD:{{ $xdata['order']->driver->distance }}m</span>
+                            @endif
+                            <span class="badge bg-secondary mx-1">CD:{{ $xdata['distance'][2] }}m</span>
+                        @endif
+                    </div>
+                    <div class="card-body">
+                        @if (!$xdata['driver3'])
+                            <div class="alert alert-danger" role="alert">
+                                No Order!
+                            </div>
+                        @else
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    {{ $xdata['order']->name }}
+                                    <span class="badge bg-secondary mx-1">{{ $xdata['order']->status }}</span>
+                                </li>
+                                <li class="list-group-item">ED:/{{ round($xdata['order']->est_distance / 1000, 2) }}
+                                    km</li>
+                                <li class="list-group-item">ET:/{{ round($xdata['order']->est_time / 60, 0) }} min
+                                </li>
+                                <li class="list-group-item">EP:/{{ $xdata['order']->est_price }} TL</li>
+                                <li class="list-group-item">
+                                    Distanse:/{{ round($xdata['order']->distance / 1000, 2) }}
+                                    km</li>
+                                <li class="list-group-item">Time:/{{ round($xdata['order']->duration / 60, 0) }} min
+                                </li>
+                                <li class="list-group-item">Price:/{{ $xdata['order']->total }} TL</li>
+                                @if ($xdata['order']->status == 2)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.accept', $xdata['order']->driver_id) }}"
+                                            class="btn btn-success">Accept</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.reject') }}"
+                                            class="btn  btn-danger">Reject</a>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status == 13)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.accept', $xdata['driver3']['pivot']['driver_id']) }}"
+                                            class="btn btn-success">Accept</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.driver.reject') }}"
+                                            class="btn  btn-danger">Reject</a>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status == 21)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.order.start') }}" class="btn btn-success">Start
+                                            Trip</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.order.abort') }}" class="btn btn-danger">Abort</a>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status == 22)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('test.order.end') }}" class="btn btn-warning">End Trip</a>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status == 23)
+                                    <li class="list-group-item">
+                                        <form method="POST" action="{{ route('test.order.complete') }}">
+                                            @csrf
+                                            <div class="input-group">
+                                                <input type="text" name="total" value="{{ $xdata['order']->total }}"
+                                                    class="form-control">
+                                                <div class="input-group-text">
+                                                    <button type="submit" class="btn btn-sm btn-info">Complete</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </li>
+                                @endif
+                                @if ($xdata['order']->status != 13)
+                                    <form method="POST" action="{{ route('test.tracking') }}">
+                                        @csrf
+                                        <div class="mb-1">
+                                            <select name="loc" class="form-control">
+                                                <option value="41.0220874,28.9447355">A0</option>
+                                                <option value="41.0222871,28.9446004">A1</option>
+                                                <option value="41.0215747,28.945396">A2</option>
+                                                <option value="41.0191247,28.9405414">S0</option>
+                                                <option value="41.0153066,28.943687">S1</option>
+                                                <option value="41.0124116,28.9422497">S2</option>
+                                                <option value="41.0110715,28.941122">S3</option>
+                                                <option value="41.0109667,28.9416802">S4</option>
+                                                <option value="41.008032,28.9348213">E0</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="input-group-text">
+                                            <button type="submit" class="btn btn-sm btn-info">Move</button>
+                                        </div>
+                                    </form>
+                                @endif
+                            </ul>
+
+                        @endif
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

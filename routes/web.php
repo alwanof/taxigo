@@ -32,9 +32,6 @@ Route::get('/', function () {
 });
 // TEST
 
-Route::get('run/{v?}', 'TestoController@run')->name('test.run');
-Route::post('result', 'TestoController@result')->name('test.result');
-
 Route::get('/test', 'TestoController@test')->name('test.index');
 Route::post('/test', 'TestoController@create')->name('test.create');
 Route::get('/test/reset', 'TestoController@reset')->name('test.reset');
@@ -42,7 +39,7 @@ Route::get('/test/office/accept', 'TestoController@officeAccept')->name('test.of
 Route::get('/test/office/reject', 'TestoController@officeReject')->name('test.office.reject');
 Route::get('/test/front/accept', 'TestoController@frontAccept')->name('test.front.accept');
 Route::get('/test/front/reject', 'TestoController@frontReject')->name('test.front.reject');
-Route::get('/test/driver/accept', 'TestoController@driverAccept')->name('test.driver.accept');
+Route::get('/test/driver/accept/{driver_id}', 'TestoController@driverAccept')->name('test.driver.accept');
 Route::get('/test/driver/reject', 'TestoController@driverReject')->name('test.driver.reject');
 
 Route::post('/test/driver/tracking', 'TestoController@tracking')->name('test.tracking');

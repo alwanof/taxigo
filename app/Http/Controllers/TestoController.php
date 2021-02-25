@@ -10,61 +10,73 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
 class TestoController extends Controller
 {
 
-    public function run($v = 0)
-    {
-        //$res = Http::get(env('APP_URL') . '/api/testoo')->throw()->json();
-        $res = Http::get(url('api/testoo'))->throw()->json();
-        return $res;
-        $curl = function_exists('curl_version') ? 'Enabled' : 'Disabled';
-        return view('run', compact(['v', 'curl']));
-    }
-    public function result(Request $request)
-    {
-        $res = Http::get(env('APP_URL') . '/api/testoo')->throw()->json();
-        return $res;
-
-        //return redirect(route('test.run', $res));
-    }
-
-
-
     public function test()
     {
 
 
+        /*$drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [41.013909, 28.9377643, 41.013909, 21, 2, 5]);
+        $driverIDs = array_map(function ($value) {
+            return $value->id;
+        }, $drivers);
+        return $driverIDs;*/
         $orderKey = Order::where('session', 'TEST');
         $hasOrder = ($orderKey->count() > 0) ? true : false;
         $order = ($hasOrder) ? $orderKey->first() : null;
 
+        $d1 = Driver::where('hash', 'h5nTcgq84J')->first();
+        $d2 = Driver::where('hash', 'XEGtCWfzZI')->first();
+        $d3 = Driver::where('hash', 'bWxg7tCxiG')->first();
+
         $driver1 = null;
         $driver2 = null;
+        $driver3 = null;
+        $distance = [0, 0, 0];
         $service = null;
-        //$driver1 = Http::get(env('APP_URL') . '/api/app/get/order/h5nTcgq84J')->json();
-        //return $driver1;
+        $office = User::withoutGlobalScope('ref')->find(21);
 
         if ($order) {
             $service = Service::withoutGlobalScope('ref')->find($order->service_id);
+            $distance = [
+                cooDistance($d1->lat, $d1->lng, $order->from_lat, $order->from_lng) * 1000,
+                cooDistance($d2->lat, $d2->lng, $order->from_lat, $order->from_lng) * 1000,
+                cooDistance($d3->lat, $d3->lng, $order->from_lat, $order->from_lng) * 1000,
+            ];
 
-            if ($order->driver_id == 6) {
+            if ($order->office->settings['auto_fwd_order'] && $order->driver_id == null) {
+                $driver1 = Http::get(env('APP_URL') . '/api/app/get/feeds/h5nTcgq84J')->json();
+                $driver2 = Http::get(env('APP_URL') . '/api/app/get/feeds/XEGtCWfzZI')->json();
+                $driver3 = Http::get(env('APP_URL') . '/api/app/get/feeds/bWxg7tCxiG')->json();
+            } else {
 
-                $driver1 = Http::get(env('APP_URL') . '/api/app/get/order/h5nTcgq84J')->json();
-            }
-            if ($order->driver_id == 16) {
+                if ($order->driver_id == 6) {
 
-                $driver2 = Http::get(env('APP_URL') . '/api/app/get/order/XEGtCWfzZI')->json();
+                    $driver1 = Http::get(env('APP_URL') . '/api/app/get/order/h5nTcgq84J')->json();
+                }
+                if ($order->driver_id == 16) {
+
+                    $driver2 = Http::get(env('APP_URL') . '/api/app/get/order/XEGtCWfzZI')->json();
+                }
+                if ($order->driver_id == 17) {
+
+                    $driver3 = Http::get(env('APP_URL') . '/api/app/get/order/bWxg7tCxiG')->json();
+                }
             }
         }
         $xdata = [
             'order' => $order,
             'service' => $service,
+            'office' => $office,
             'driver1' => $driver1,
             'driver2' => $driver2,
+            'driver3' => $driver3,
+            'distance' => $distance
         ];
 
         //return $xdata;
@@ -125,11 +137,14 @@ class TestoController extends Controller
     private function forwardOrder(Order $order)
     {
         if ($order->office->settings['auto_fwd_order']) {
-            $drivers = Driver::where([
-                'user_id' => $order->user_id,
-                'busy' => 2
-            ])->pluck('id');
-            $order->subscribers()->sync([$drivers]);
+
+            $workRange = $order->office->settings['work_rang'];
+            $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            $driverIDs = array_map(function ($value) {
+                return $value->id;
+            }, $drivers);
+
+            $order->subscribers()->sync($driverIDs);
             $order->status = 13;
             $order->save();
             return true;
@@ -142,8 +157,11 @@ class TestoController extends Controller
         $r2 = rand(0, 9);
         $r3 = rand(0, 9);
         $r4 = rand(0, 9);
-
-        Order::where('session', 'TEST')->delete();
+        $r5 = rand(0, 9);
+        $r6 = rand(0, 9);
+        $order = Order::where('session', 'TEST')->first();
+        $order->subscribers()->sync([]);
+        $order->delete();
         Driver::where('id', 6)->update([
             'busy' => 2,
             'lng' => '28.94' . $r1 . '355',
@@ -152,7 +170,12 @@ class TestoController extends Controller
         Driver::where('id', 16)->update([
             'busy' => 2,
             'lng' => '28.94' . $r3 . '355',
-            'lat' => '41.022' . $r4 . '874'
+            'lat' => '41.032' . $r4 . '874'
+        ]);
+        Driver::where('id', 17)->update([
+            'busy' => 2,
+            'lng' => '28.94' . $r5 . '355',
+            'lat' => '41.052' . $r6 . '874'
         ]);
 
         return redirect(route('test.index'));
@@ -246,10 +269,11 @@ class TestoController extends Controller
         return redirect(route('test.index'));
     }
 
-    public function driverAccept()
+    public function driverAccept($driver_id)
     {
+        $hash = Driver::find($driver_id)->hash;
         $order = Order::where('session', 'TEST')->first();
-        Http::get(env('APP_URL') . '/api/app/approve/' . $order->id)->json();
+        Http::get(env('APP_URL') . '/api/app/' . $hash . '/approve/' . $order->id)->json();
 
         return redirect(route('test.index'));
     }
