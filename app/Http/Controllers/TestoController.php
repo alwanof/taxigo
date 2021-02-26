@@ -122,13 +122,19 @@ class TestoController extends Controller
             }
         }
 
-        $this->forwardOrder($order);
+        $action = 'create';
+        $driverHashs = [];
+        $forwards = $this->forwardOrder($order);
+        if ($forwards) {
+            $action = 'forward';
+            $driverHashs = $forwards;
+        }
 
         Stream::create([
             'pid' => $order->id,
             'model' => 'Order',
             'action' => 'C',
-            'meta' => ['office' => $order->office->id, 'action' => 'create']
+            'meta' => ['office' => $order->office->id, 'drivers' => $driverHashs, 'action' => $action]
         ]);
 
         return redirect(route('test.index'));
@@ -143,11 +149,15 @@ class TestoController extends Controller
             $driverIDs = array_map(function ($value) {
                 return $value->id;
             }, $drivers);
+            $driverHashs = array_map(function ($value) {
+                return $value->hash;
+            }, $drivers);
 
             $order->subscribers()->sync($driverIDs);
             $order->status = 13;
             $order->save();
-            return true;
+
+            return $driverHashs;
         }
         return false;
     }

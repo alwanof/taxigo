@@ -269,6 +269,8 @@ class OrderController extends Controller
         $order->status = 21;
         if ($order->driver_id != $driver->id) {
             $order->driver_id = $driver->id;
+            $driver->busy = 1;
+            $driver->save();
             Stream::create([
                 'pid' => $order->id,
                 'model' => 'Order',
@@ -278,6 +280,7 @@ class OrderController extends Controller
         }
 
         $order->save();
+
         $order->subscribers()->sync([]);
         Stream::create([
             'pid' => $order->id,
@@ -309,6 +312,24 @@ class OrderController extends Controller
         $driver = Driver::where('hash', $hash)->firstOrFail();
 
         $order = Order::findOrFail($order_id);
+        $office = User::findOrFail($order->user_id);
+        if ($office->settings['auto_fwd_order']) {
+            $driver->requests()->sync([]);
+            Stream::create([
+                'pid' => $order->id,
+                'model' => 'Order',
+                'action' => 'U',
+                'meta' => ['office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
+            ]);
+            Stream::create([
+                'pid' => $driver->id,
+                'model' => 'Driver',
+                'action' => 'U',
+                'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
+            ]);
+
+            return response(1, 200);
+        }
         $order->status = 1;
         $order->driver_id = null;
         $order->block = ($order->block == null) ? $driver->id : '--' . $driver->id;
@@ -317,24 +338,9 @@ class OrderController extends Controller
         $driver->busy = 2;
         $driver->save();
 
-        $office = User::findOrFail($order->user_id);
 
-        if ($office->settings['auto_fwd_order']) {
-            $block = explode('--', $order->block);
-            $driver = Driver::where('user_id', $order->user_id)
-                ->where('busy', 2)
-                ->whereNotIn('id', $block)
-                ->inRandomOrder()
-                ->first();
-            if ($driver) {
-                $order->driver_id = $driver->id;
-                $order->status = 2;
-                $order->save();
-            } else {
-                $order->status = 91;
-                $order->save();
-            }
-        }
+
+
         Stream::create([
             'pid' => $order->id,
             'model' => 'Order',
