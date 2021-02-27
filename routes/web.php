@@ -32,6 +32,12 @@ Route::get('/', function () {
 });
 // TEST
 
+Route::get('/loaderio-7c0679154a4aa40544f62c84da1ffa48', function () {
+
+
+    echo 'loaderio-7c0679154a4aa40544f62c84da1ffa48';
+});
+
 Route::get('/test', 'TestoController@test')->name('test.index');
 Route::post('/test', 'TestoController@create')->name('test.create');
 Route::get('/test/reset', 'TestoController@reset')->name('test.reset');
