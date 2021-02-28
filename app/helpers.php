@@ -1,25 +1,31 @@
 <?php
-function cooDistance($lat_a, $lon_a, $lat_b, $lon_b)
-{
-    $delta_lat = $lat_b - $lat_a;
-    $delta_lon = $lon_b - $lon_a;
+if (!function_exists('cooDistance')) {
+    function cooDistance($lat_a, $lon_a, $lat_b, $lon_b)
+    {
+        return 0;
 
-    $earth_radius = 6372.795477598;
+        $delta_lat = $lat_b - $lat_a;
+        $delta_lon = $lon_b - $lon_a;
 
-    $alpha    = $delta_lat / 2;
-    $beta     = $delta_lon / 2;
-    $a        = sin(deg2rad($alpha)) * sin(deg2rad($alpha)) + cos(deg2rad($lat_a)) * cos(deg2rad($lat_b)) * sin(deg2rad($beta)) * sin(deg2rad($beta));
-    $c        = asin(min(1, sqrt($a)));
-    $distance = 2 * $earth_radius * $c;
-    $distance = round($distance, 2);
+        $earth_radius = 6372.795477598;
 
-    return $distance;
+        $alpha    = $delta_lat / 2;
+        $beta     = $delta_lon / 2;
+        $a        = sin(deg2rad($alpha)) * sin(deg2rad($alpha)) + cos(deg2rad($lat_a)) * cos(deg2rad($lat_b)) * sin(deg2rad($beta)) * sin(deg2rad($beta));
+        $c        = asin(min(1, sqrt($a)));
+        $distance = 2 * $earth_radius * $c;
+        $distance = round($distance, 2);
+
+        return $distance;
+    }
 }
 
-function diffSeconds($from)
-{
-    $now =  Date("Y-m-d H:i:s");
-    $fromTime  = strtotime($from);
-    $toTime = strtotime($now);
-    return $toTime - $fromTime;
+if (!function_exists('diffSeconds')) {
+    function diffSeconds($from)
+    {
+        $now =  Date("Y-m-d H:i:s");
+        $fromTime  = strtotime($from);
+        $toTime = strtotime($now);
+        return $toTime - $fromTime;
+    }
 }

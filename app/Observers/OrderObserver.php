@@ -6,6 +6,7 @@ use App\Driver;
 use App\Order;
 use App\Parse\Stream;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class OrderObserver
 {
@@ -17,8 +18,9 @@ class OrderObserver
      */
     public function created(Order $order)
     {
+        Log::info('This is some order information.');
         // calculating Estimated (Distance , Time , Price)
-        if ($order->from_lat != 0 && $order->from_lng != 0   && $order->to_lat != 0  && $order->to_lng != 0) {
+        /*if ($order->from_lat != 0 && $order->from_lng != 0   && $order->to_lat != 0  && $order->to_lng != 0) {
             $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
                 'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
                 'language' => 'en-US',
@@ -47,7 +49,7 @@ class OrderObserver
             'model' => 'Order',
             'action' => 'C',
             'meta' => ['office' => $order->office->id, 'agent' => $order->actor->id, 'action' => 'create']
-        ]);
+        ]);*/
     }
 
     /**

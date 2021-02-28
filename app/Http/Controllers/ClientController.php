@@ -9,7 +9,9 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
@@ -82,6 +84,7 @@ class ClientController extends Controller
     {
 
 
+
         $office = User::where('email', $office_email)->firstOrFail();
 
         $lang = $this->getLang($office->settings['lang']);
@@ -92,8 +95,8 @@ class ClientController extends Controller
 
         $lang = $this->getLang($office->settings['lang']);
         //return App::getLocale();
-
-        return view('client.form', compact(['office', 'agent', 'session', 'lang']));
+        $mapCenter = [$office->settings['coordinate_lat'], $office->settings['coordinate_lng']];
+        return view('client.form', compact(['office', 'agent', 'session', 'lang', 'mapCenter']));
     }
 
     public function composse(Request $request)
@@ -113,6 +116,7 @@ class ClientController extends Controller
             return view('client.order', compact(['office', 'agent', 'order', 'lang']));
         }
         // Create a new Order
+
         $order = Order::create(
             [
                 'session' => $request->session,
@@ -125,49 +129,71 @@ class ClientController extends Controller
                 'to_address' => ($request->to_address) ? $request->to_address : null,
                 'to_lat' => ($request->to_lat || ($request->to_lat != $request->from_lat)) ? $request->to_lat : 0,
                 'to_lng' => ($request->to_lng || ($request->to_lng != $request->from_lng)) ? $request->to_lng : 0,
-                'service_id' => $request->service,
+                'service_id' => $request->service_id,
                 'user_id' => $office->id,
                 'parent' => $agent->id,
                 'status' => 0,
                 'note' => $request->note
             ]
         );
-        return view('client.order', compact(['office', 'agent', 'order', 'lang']));
-
-        // Oh I found forward function is running
-        /*if ($office->settings['auto_fwd_order']) {
-            $this->forwardOrder($agent, $office, $order);
-            return view('client.order', compact(['office', 'agent', 'order', 'lang']));
-        }*/
-        //Stream
-
-
-    }
-
-    private function forwardOrder($agent, $office, $order)
-    {
-        $block = explode('--', $order->block);
-        $driver = Driver::where('user_id', $order->user_id)
-            ->where('busy', 0)
-            ->whereNotIn('id', $block)
-            ->inRandomOrder()
-            ->first();
-        if ($driver) {
-            $order->driver_id = $driver->id;
-            $order->status = 2;
-            $order->save();
-        } else {
-            $order->status = 91;
-            $order->save();
+        $this->est_stuff($order);
+        $action = 'create';
+        $driverHashs = [];
+        $forwards = $this->forwardOrder($order);
+        if ($forwards) {
+            $action = 'forward';
+            $driverHashs = $forwards;
         }
         Stream::create([
             'pid' => $order->id,
             'model' => 'Order',
             'action' => 'C',
-            'meta' => ['hash' => $driver->hash, 'office' => $office->id, 'agent' => $agent->id, 'action' => 'create']
+            'meta' => ['office' => $order->office->id, 'drivers' => $driverHashs, 'action' => $action]
         ]);
+        return view('client.order', compact(['office', 'agent', 'order', 'lang']));
+    }
 
-        $this->sendMobileNoti('New Order!', 'You have been got a new order', $driver->hash);
+    private function est_stuff($order)
+    {
+        if ($order->from_lat != 0 && $order->from_lng != 0   && $order->to_lat != 0  && $order->to_lng != 0) {
+            $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+                'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
+                'language' => 'en-US',
+                'mode' => 'DRIVING',
+                'origins' => $order->from_lat . ',' . $order->from_lng,
+                'destinations' => $order->to_lat . ',' . $order->to_lng,
+            ]);
+
+            if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
+                $order->est_distance = $response['rows'][0]['elements'][0]['distance']['value'];
+                $order->est_time = $response['rows'][0]['elements'][0]['duration']['value'];
+                $order->est_price = $order->orderTotal($order->est_distance, $order->est_time);
+                $order->save();
+            }
+        }
+        return true;
+    }
+
+    private function forwardOrder($order)
+    {
+        if ($order->office->settings['auto_fwd_order']) {
+
+            $workRange = $order->office->settings['work_rang'];
+            $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            $driverIDs = array_map(function ($value) {
+                return $value->id;
+            }, $drivers);
+            $driverHashs = array_map(function ($value) {
+                return $value->hash;
+            }, $drivers);
+
+            $order->subscribers()->sync($driverIDs);
+            $order->status = 13;
+            $order->save();
+
+            return $driverHashs;
+        }
+        return false;
     }
 
 
@@ -179,6 +205,7 @@ class ClientController extends Controller
         $agent = User::findOrFail($hash[2]);
         $order = $request->all();
         $lang = $this->getLang($office->settings['lang']);
-        return view('client.dist', compact(['office', 'agent', 'order', 'lang']));
+        $mapCenter = [$office->settings['coordinate_lat'], $office->settings['coordinate_lng']];
+        return view('client.dist', compact(['office', 'agent', 'order', 'lang', 'mapCenter']));
     }
 }

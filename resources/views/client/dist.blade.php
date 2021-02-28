@@ -11,7 +11,7 @@
         <form class="form-signin was-validated text-center" action="{{ route('client.composse') }}" method="POST">
 
             @csrf
-            <input type="hidden" name="session" value="{{ $order['service'] }}">
+            <input type="hidden" name="service_id" value="{{ $order['service_id'] }}">
             <input type="hidden" name="from_lat" value="{{ $order['from_lat'] }}">
             <input type="hidden" name="from_lng" value="{{ $order['from_lng'] }}">
 
@@ -76,9 +76,12 @@
                 $("#dist").slideToggle();
             });
 
-
+            var defaultLat = {!! json_encode($mapCenter[0]) !!};
+            var defaultLng = {!! json_encode($mapCenter[1]) !!};
             var lp = new locationPicker('dist', {
                 setCurrentPosition: true, // You can omit this, defaults to true
+                lat: defaultLat,
+                lng: defaultLng
 
             }, {
                 zoom: 15 // You can set any google map options here, zoom defaults to 15
@@ -97,10 +100,12 @@
                     .lng +
                     '&key=AIzaSyANYVpeOpsNN4DqdKR4AKAyd03IQ3_9PvU',
                     function(result) {
-                        document.getElementById('to_address').value = result.results[0]
-                            .formatted_address;
-                        document.getElementById('to_lat').value = loc.lat;
-                        document.getElementById('to_lng').value = loc.lng;
+                        document.getElementById('to_address').value = (loc.lat == defaultLat) ? '' :
+                            result.results[0].formatted_address;
+                        document.getElementById('to_lat').value = (loc.lat == defaultLat) ? null : loc
+                            .lat;
+                        document.getElementById('to_lng').value = (loc.lng == defaultLng) ? null : loc
+                            .lng;
                     });
             });
 

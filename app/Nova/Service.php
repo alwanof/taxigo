@@ -73,10 +73,10 @@ class Service extends Resource
                 ];
             })->rules('required'),
             Number::make(__('Const'), 'const')
-                ->rules('required', 'min:0')->default(0),
+                ->rules('required', 'min:0')->step(0.1)->default(0),
             Number::make(__('Distance'), 'distance')
-                ->rules('required', 'min:0')->default(0),
-            Number::make(__('Time'), 'time')
+                ->rules('required', 'min:0')->step(0.1)->default(0),
+            Number::make(__('Time'), 'time')->step(0.01)
                 ->rules('required', 'min:0')->default(0),
             Select::make(__('Vehicle'), 'vehicle_id')->options(function () {
                 $options = [];

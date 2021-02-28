@@ -22,7 +22,8 @@
                     <img class="img-fluid m-2" src="/storage/{{ $service->vehicle->avatar }}" alt="" width="42">
 
                     <div>
-                        <input class="form-check-input" type="radio" name="service" value="{{ $service->id }}" required>
+                        <input class="form-check-input" type="radio" name="service_id" value="{{ $service->id }}"
+                            required>
                         <label class="form-check-label">{{ $service->title }}</label>
                     </div>
 
@@ -63,7 +64,7 @@
                         style="border: solid 1px #ced4da;background-color:#e9ecef;obacity:1"
                         placeholder="Enter your address" id="from_address" name="from_address" required readonly>
 
-                                                                                                                                                                                                            </textarea>
+                                                                                                                                                                                                                                                                                                                                    </textarea>
                     <div style="display: block;width:100%;color:green">
                         {{ __('app.Address hint1') }}
                         <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}
@@ -74,15 +75,7 @@
 
 
             </div>
-
-
-            @if (!$office->settings['auto_fwd_order'] && $office->settings['offer_enabled'])
-                <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.Continue') }}</button>
-            @else
-                <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.SUBMIT') }}</button>
-            @endif
-
-
+            <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.Continue') }}</button>
         </form>
 
     </div>
@@ -101,9 +94,12 @@
                 $("#source").slideToggle();
             });
 
-
+            var defaultLat = {!! json_encode($mapCenter[0]) !!};
+            var defaultLng = {!! json_encode($mapCenter[1]) !!};
             var lp = new locationPicker('source', {
                 setCurrentPosition: true, // You can omit this, defaults to true
+                lat: defaultLat,
+                lng: defaultLng
 
             }, {
                 zoom: 15 // You can set any google map options here, zoom defaults to 15
@@ -113,8 +109,8 @@
             google.maps.event.addListener(lp.map, 'idle', function(event) {
                 // Get current location and show it in HTML
                 var loc = lp.getMarkerPosition();
-                lat = loc.lat;
-                lng = loc.lng;
+                //lat = loc.lat;
+                //lng = loc.lng;
 
                 //onIdlePositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
                 $.getJSON(
@@ -122,6 +118,7 @@
                     .lng +
                     '&key=AIzaSyANYVpeOpsNN4DqdKR4AKAyd03IQ3_9PvU',
                     function(result) {
+                        //console.log({!! json_encode($mapCenter) !!});
                         document.getElementById('from_address').value = result.results[0]
                             .formatted_address;
                         document.getElementById('from_lat').value = loc.lat;

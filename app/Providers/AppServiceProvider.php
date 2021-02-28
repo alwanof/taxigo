@@ -37,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
             Transaction::observe(TransactionObserver::class);
             Order::observe(OrderObserver::class);
         });
+        //Order::observe(OrderObserver::class);
         //User::observe(UserObserver::class);
         //Driver::observe(DriverObserver::class);
     }
