@@ -20,16 +20,9 @@ class TestoController extends Controller
 
     public function test()
     {
-        $order = Order::find(118);
-        //$service = Service::find(4);
-        //return $order->service->queues[0];
+        //$order = Order::find(118);
+        //return $order->service->qactive;
 
-
-        /*$drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [41.013909, 28.9377643, 41.013909, 21, 2, 5]);
-        $driverIDs = array_map(function ($value) {
-            return $value->id;
-        }, $drivers);
-        return $driverIDs;*/
         $orderKey = Order::where('session', 'TEST');
         $hasOrder = ($orderKey->count() > 0) ? true : false;
         $order = ($hasOrder) ? $orderKey->first() : null;

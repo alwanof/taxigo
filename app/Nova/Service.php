@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Vehicle;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -95,6 +96,7 @@ class Service extends Resource
             Text::make(__('Vehicle'), 'vehicle_id', function () {
                 return Vehicle::withoutGlobalScope('ref')->find($this->vehicle_id)->title;
             })->sortable()->onlyOnIndex(),
+            BelongsToMany::make(__('Queue'), 'queues', 'App\Nova\Queue')->hideWhenCreating()
 
 
 
