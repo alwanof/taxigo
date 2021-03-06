@@ -74,6 +74,7 @@ Route::get('/app/get/feeds/{hash}', 'API\OrderController@getDriverFeed'); //new
 Route::get('/app/{hash}/queue/join', 'API\DriverController@join'); //new
 Route::get('/app/{hash}/queue/detach', 'API\DriverController@detach'); //new
 
+
 Route::get('/app/{hash}/done/{order_id}', 'API\OrderController@driverCompleteOrder');
 
 Route::get('/app/{hash}/tracking/{lat}/{lng}', 'API\DriverController@tracking');

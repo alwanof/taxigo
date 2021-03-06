@@ -8,7 +8,9 @@ use App\Order;
 use App\Parse\Stream;
 use App\User;
 use App\Queue;
+use App\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class DriverController extends Controller
 {
@@ -78,7 +80,8 @@ class DriverController extends Controller
             $queue = Queue::where(['driver_id' => $driver->id, 'service_id' => $order->service_id])->frist();
             if ($queue) {
                 if ($driver->distance > $office->settings['queue_range']) {
-                    $qStatus = 3;
+                    Http::get(env('APP_URL') . '/api/' . $driver->hash . '/queue/detach')->json();
+                    $qStatus = 0;
                 } else {
                     $qStatus = 2;
                 }
@@ -112,13 +115,20 @@ class DriverController extends Controller
     }
     public function join($hash)
     {
-        return response(1, 200);
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+        $service = Service::where('vehicle_id', $driver->vehicle_id)->firstOrFail();
+        $service->queues()->attach($driver->id);
+        return response(2, 200);
     }
     public function detach($hash)
     {
 
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+        $service = Service::where('vehicle_id', $driver->vehicle_id)->firstOrFail();
+        $service->queues()->detach($driver->id);
         return response(1, 200);
     }
+
     public function getDriverFromHash($hash)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
