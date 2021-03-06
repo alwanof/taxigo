@@ -14,7 +14,7 @@ class Order extends Model
 
     // 0 new
     //Office: 1=> S D | 12 => Send Offer | 13=> Forwarded
-    //Driver: 2 => Y/N option | 21 on the way | 22 start trip | 23 start trip
+    //Driver: 2 => Y/N option | 21 on the way | 22 start trip | 23 faild trip
 
     //Customer: 3 => Y/N option
     //Done 9=> done | 91=> RO | 92=>RC | 93=>NoRO | 94=>NoRC 99=>CC | 90 failed

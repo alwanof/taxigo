@@ -23,4 +23,10 @@ class Service extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+
+    public function queues()
+    {
+        return $this->belongsToMany(Driver::class, 'queues', 'service_id', 'driver_id');
+    }
 }

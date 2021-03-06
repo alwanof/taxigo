@@ -22,6 +22,8 @@ class CreateServicesTable extends Migration
             $table->double('time')->default(0);
             $table->boolean('active')->default(1);
             $table->unsignedBigInteger('vehicle_id');
+            $table->string('qtitle')->default('Untitled#N');
+            $table->tinyInteger('qactive')->default(0);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('parent');
             $table->timestamps();

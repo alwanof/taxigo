@@ -13,12 +13,16 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Throwable;
+use Illuminate\Support\Facades\Log;
 
 class TestoController extends Controller
 {
 
     public function test()
     {
+        $order = Order::find(118);
+        //$service = Service::find(4);
+        //return $order->service->queues[0];
 
 
         /*$drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [41.013909, 28.9377643, 41.013909, 21, 2, 5]);
@@ -144,23 +148,34 @@ class TestoController extends Controller
     {
         if ($order->office->settings['auto_fwd_order']) {
 
-            $workRange = $order->office->settings['work_rang'];
-            $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            //workrange method
+            if ($order->service->qactive && count($order->service->queues) > 0) {
+                $drivers = $order->service->queues;
+            } else {
+                $workRange = $order->office->settings['work_rang'];
+                $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            }
+
             $driverIDs = array_map(function ($value) {
                 return $value->id;
             }, $drivers);
             $driverHashs = array_map(function ($value) {
                 return $value->hash;
             }, $drivers);
+            if (count($driverIDs) > 0) {
+                $order->subscribers()->sync($driverIDs);
+                $order->status = 13;
+            } else {
+                $order->status = 99;
+            }
 
-            $order->subscribers()->sync($driverIDs);
-            $order->status = 13;
             $order->save();
 
             return $driverHashs;
         }
         return false;
     }
+
     public function reset()
     {
         $r1 = rand(0, 9);
@@ -295,5 +310,119 @@ class TestoController extends Controller
         $driver = Driver::find($order->driver_id);
         Http::get(env('APP_URL') . '/api/app/' . $driver->hash . '/reject/' . $order->id)->json();
         return redirect(route('test.index'));
+    }
+
+    // move lab for driver
+
+
+    public function move(Request $request, $s)
+    {
+
+        $rider = Driver::where('user_id', 21)->inRandomOrder()->first();
+        if ($s == 999) {
+            $request->session()->forget('point');
+            $msg = ['Reset Done'];
+            return view('move', compact(['s', 'msg']));
+        }
+
+        $order = Order::where('session', 'TEST')->first();
+        if (!$order) {
+            $this->randomMove($request, $rider->hash, [$rider->lat, $rider->lng]);
+            $msg = ['No Order'];
+            return view('move', compact(['s', 'msg']));
+        }
+        $driver = Driver::find($order->driver_id);
+        if (!$driver) {
+            $this->randomMove($request, $rider->hash, [$rider->lat, $rider->lng]);
+            $msg = ['No Driver'];
+            return view('move', compact(['s', 'msg']));
+        }
+
+
+        $step = 0.001;
+        $point = [$driver->lat, $driver->lng];
+
+        if ($order->status == 21) {
+            $dist = [$order->from_lat, $order->from_lng];
+        } else if ($order->status == 22) {
+            $dist = [$order->to_lat, $order->to_lng];
+        } else {
+            $this->randomMove($request, $driver->hash, $point);
+            $msg = 'Random Move';
+            return view('move', compact(['s', 'msg']));
+        }
+
+
+
+
+        $moveToPath = $this->pathMove($request, $driver->hash, $dist, $point, $step);
+
+        if (!$moveToPath) {
+            Log::info('Mission Done');
+            $msg = ['Mission Done'];
+            return view('move', compact(['s', 'msg']));
+        }
+
+        $msg = $point;
+        return view('move', compact(['s', 'msg']));
+    }
+
+    private function pathMove(Request $request, $hash, $p1, $p2, $step)
+    {
+
+        if (!$request->session()->has('point')) {
+            $request->session()->put('point', $p2);
+            Log::info('Start');
+        }
+
+        $p2 = session('point');
+        if (!$this->star($p1, $p2, $step)) {
+            return false;
+        }
+        $p2 = $this->star($p1, $p2, $step);
+        Http::get(env('APP_URL') . '/api/app/' . $hash . '/tracking/' . $p2[0] . '/' . $p2[1])->json();
+
+        $request->session()->put('point', $p2);
+        Log::info($p2);
+        return true;
+    }
+
+    private function randomMove(Request $request, $hash, $p2)
+    {
+        $step = rand(-50, 50) / 10000;
+
+        if (!$request->session()->has('point')) {
+            $request->session()->put('point', $p2);
+            Log::info('Start Random');
+        }
+
+        $p2 = session('point');
+        $p2 = $this->randomStar($p2, $step);
+        Http::get(env('APP_URL') . '/api/app/' . $hash . '/tracking/' . $p2[0] . '/' . $p2[1])->json();
+        $request->session()->put('point', $p2);
+        Log::info($p2);
+        return true;
+    }
+
+    private function star($x, $y, $w)
+    {
+        Log::info('Distance:' . abs($x[0] - $y[0]) . ',' . abs($x[1] - $y[1]));
+        if (abs($x[0] - $y[0]) <= $w || abs($x[1] - $y[1]) <= $w) {
+            return false;
+        }
+        return [
+            ($x[0] > $y[0]) ? $y[0] + $w : $y[0] - $w,
+            ($x[1] > $y[1]) ? $y[1] + $w : $y[1] - $w,
+        ];
+    }
+
+    private function randomStar($y, $w)
+    {
+        Log::info('Random:');
+        Log::info($y);
+        return [
+            $y[0] + $w,
+            $y[1] + $w,
+        ];
     }
 }

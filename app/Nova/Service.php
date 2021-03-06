@@ -89,6 +89,8 @@ class Service extends Resource
                 }
                 return $options;
             })->onlyOnForms(),
+            Text::make(__('Queue_Title'), 'qtitle'),
+            Boolean::make(__('Queue_Active'), 'qactive')->withMeta(["value" => 0]),
             Boolean::make(__('Active'), 'active')->withMeta(["value" => 1]),
             Text::make(__('Vehicle'), 'vehicle_id', function () {
                 return Vehicle::withoutGlobalScope('ref')->find($this->vehicle_id)->title;

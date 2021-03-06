@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use App\Parse\Stream;
 use App\User;
+use App\Queue;
 use Illuminate\Http\Request;
 
 class DriverController extends Controller
@@ -70,6 +71,25 @@ class DriverController extends Controller
         $driver->distance = $distance;
         $driver->save();
 
+        //check if there is queue:
+        //&& count($order->service->queues) > 0
+        $qStatus = 0;
+        if ($order->service->qactive) {
+            $queue = Queue::where(['driver_id' => $driver->id, 'service_id' => $order->service_id])->frist();
+            if ($queue) {
+                if ($driver->distance > $office->settings['queue_range']) {
+                    $qStatus = 3;
+                } else {
+                    $qStatus = 2;
+                }
+            } else {
+                if ($driver->distance < $office->settings['queue_range']) {
+                    $qStatus = 1;
+                }
+            }
+        }
+
+
 
 
         Stream::create([
@@ -78,7 +98,10 @@ class DriverController extends Controller
             'action' => 'U',
             'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent]
         ]);
-        return response(1, 200);
+        return response([
+            'distance' => $driver->distance,
+            'qcode' => $qStatus
+        ], 200);
     }
 
     public function checkStatus($hash)
@@ -86,6 +109,15 @@ class DriverController extends Controller
         $driver = Driver::where('hash', $hash)->firstOrFail();
 
         return response($driver->busy, 200);
+    }
+    public function join($hash)
+    {
+        return response(1, 200);
+    }
+    public function detach($hash)
+    {
+
+        return response(1, 200);
     }
     public function getDriverFromHash($hash)
     {

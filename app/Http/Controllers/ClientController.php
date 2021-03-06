@@ -178,8 +178,13 @@ class ClientController extends Controller
     {
         if ($order->office->settings['auto_fwd_order']) {
 
-            $workRange = $order->office->settings['work_rang'];
-            $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            //workrange method
+            if ($order->service->qactive && count($order->service->queues) > 0) {
+                $drivers = $order->service->queues;
+            } else {
+                $workRange = $order->office->settings['work_rang'];
+                $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            }
             $driverIDs = array_map(function ($value) {
                 return $value->id;
             }, $drivers);
@@ -187,8 +192,12 @@ class ClientController extends Controller
                 return $value->hash;
             }, $drivers);
 
-            $order->subscribers()->sync($driverIDs);
-            $order->status = 13;
+            if (count($driverIDs) > 0) {
+                $order->subscribers()->sync($driverIDs);
+                $order->status = 13;
+            } else {
+                $order->status = 99;
+            }
             $order->save();
 
             return $driverHashs;

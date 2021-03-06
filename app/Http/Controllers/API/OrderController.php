@@ -6,6 +6,7 @@ use App\Driver;
 use App\Http\Controllers\Controller;
 use App\Order;
 use App\Parse\Stream;
+use App\Queue;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -282,6 +283,9 @@ class OrderController extends Controller
         $order->save();
 
         $order->subscribers()->sync([]);
+        //remove from Queue
+        Queue::where('driver_id', $driver->id)->delete();
+
         Stream::create([
             'pid' => $order->id,
             'model' => 'Order',
