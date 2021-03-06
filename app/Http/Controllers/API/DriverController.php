@@ -76,9 +76,9 @@ class DriverController extends Controller
         //check if there is queue:
         //&& count($order->service->queues) > 0
         $qStatus = 0;
-        $qservice = Service::where(['driver_id' => $driver->id, 'user_id' => $office->id])->frist();
+        $qservice = Service::where(['driver_id' => $driver->id, 'user_id' => $office->id])->first();
         if ($qservice->qactive) {
-            $queue = Queue::where(['driver_id' => $driver->id, 'service_id' => $qservice->id])->frist();
+            $queue = Queue::where(['driver_id' => $driver->id, 'service_id' => $qservice->id])->first();
             if ($queue) {
                 if ($driver->distance > $office->settings['queue_range']) {
                     Http::get(env('APP_URL') . '/api/' . $driver->hash . '/queue/detach')->json();
