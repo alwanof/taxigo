@@ -45,6 +45,8 @@
                     @endif
                 </div>
             </form>
+            <a href="/move/5" target="_blank" class="btn btn-info">Start Drivers Lab</a>
+            <a href="/move/999" target="_blank" class="btn btn-danger">Stop Drivers Lab</a>
 
 
         </div>
@@ -193,6 +195,14 @@
                         @endif
                     </div>
                     <div class="card-body">
+                        @if ($xdata['drivers'][0]->services()->count() == 0 && $xdata['drivers'][0]->distance < $xdata['office']->settings['queue_range'])
+                            <a href="{{ route('test.join', 'h5nTcgq84J') }}" target="_blank"
+                                class="btn btn-success my-2">Join Queue</a>
+                        @endif
+                        @if ($xdata['drivers'][0]->services()->count() > 0)
+                            <a href="{{ route('test.detach', 'h5nTcgq84J') }}" target="_blank"
+                                class="btn btn-danger my-2">Detach Queue</a>
+                        @endif
                         @if (!$xdata['driver1'])
                             <div class="alert alert-danger" role="alert">
                                 No Order!
@@ -293,6 +303,14 @@
             <div class="div col">
                 <div class="card">
                     <div class="card-header">
+                        @if ($xdata['drivers'][1]->services()->count() == 0 && $xdata['drivers'][1]->distance < $xdata['office']->settings['queue_range'])
+                            <a href="{{ route('test.join', 'XEGtCWfzZI') }}" target="_blank"
+                                class="btn btn-success my-2">Join Queue</a>
+                        @endif
+                        @if ($xdata['drivers'][1]->services()->count() > 0)
+                            <a href="{{ route('test.detach', 'XEGtCWfzZI') }}" target="_blank"
+                                class="btn btn-danger my-2">Detach Queue</a>
+                        @endif
                         Driver2:
                         @if ($xdata['order'])
                             @if ($xdata['order']->driver_id == 16)
@@ -405,6 +423,14 @@
             <div class="div col">
                 <div class="card">
                     <div class="card-header">
+                        @if ($xdata['drivers'][2]->services()->count() == 0 && $xdata['drivers'][2]->distance < $xdata['office']->settings['queue_range'])
+                            <a href="{{ route('test.join', 'bWxg7tCxiG') }}" target="_blank"
+                                class="btn btn-success my-2">Join Queue</a>
+                        @endif
+                        @if ($xdata['drivers'][2]->services()->count() > 0)
+                            <a href="{{ route('test.detach', 'bWxg7tCxiG') }}" target="_blank"
+                                class="btn btn-danger my-2">Detach Queue</a>
+                        @endif
                         Driver3:
                         @if ($xdata['order'])
                             @if ($xdata['order']->driver_id == 17)

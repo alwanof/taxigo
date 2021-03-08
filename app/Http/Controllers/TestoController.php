@@ -20,8 +20,6 @@ class TestoController extends Controller
 
     public function test()
     {
-        //$order = Order::find(118);
-        //return $order->service->qactive;
 
         $orderKey = Order::where('session', 'TEST');
         $hasOrder = ($orderKey->count() > 0) ? true : false;
@@ -73,7 +71,8 @@ class TestoController extends Controller
             'driver1' => $driver1,
             'driver2' => $driver2,
             'driver3' => $driver3,
-            'distance' => $distance
+            'distance' => $distance,
+            'drivers' => [$d1, $d2, $d3]
         ];
 
         //return $xdata;
@@ -296,6 +295,22 @@ class TestoController extends Controller
         return redirect(route('test.index'));
     }
 
+    public function join($hash)
+    {
+
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+        Http::get(env('APP_URL') . '/api/app/' . $driver->hash . '/queue/join')->json();
+        return redirect(route('test.index'));
+    }
+
+    public function detach($hash)
+    {
+
+        $driver = Driver::where('hash', $hash)->firstOrFail();
+        Http::get(env('APP_URL') . '/api/app/' . $driver->hash . '/queue/detach')->json();
+        return redirect(route('test.index'));
+    }
+
 
     public function driverReject()
     {
@@ -308,8 +323,25 @@ class TestoController extends Controller
     // move lab for driver
 
 
-    public function move(Request $request, $s)
+    public function move(Request $request, $s, $hash = null)
     {
+        if ($hash) {
+            $step = 0.001;
+            $driver = Driver::find($hash);
+            $point = [$driver->lat, $driver->lng];
+            $office = User::find($driver->user_id);
+            $dist = [$office->settings['coordinate_lat'], $office->settings['coordinate_lng']];
+
+            $moveToPath = $this->pathMove($request, $driver->hash, $dist, $point, $step);
+
+            if (!$moveToPath) {
+                //Log::info('Mission Done');
+                $msg = ['Mission Done'];
+                return view('move', compact(['s', 'msg']));
+            }
+            $msg = $point;
+            return view('move', compact(['s', 'msg']));
+        }
 
         $rider = Driver::where('user_id', 21)->inRandomOrder()->first();
         if ($s == 999) {
@@ -345,13 +377,10 @@ class TestoController extends Controller
             return view('move', compact(['s', 'msg']));
         }
 
-
-
-
         $moveToPath = $this->pathMove($request, $driver->hash, $dist, $point, $step);
 
         if (!$moveToPath) {
-            Log::info('Mission Done');
+            //Log::info('Mission Done');
             $msg = ['Mission Done'];
             return view('move', compact(['s', 'msg']));
         }
@@ -365,7 +394,7 @@ class TestoController extends Controller
 
         if (!$request->session()->has('point')) {
             $request->session()->put('point', $p2);
-            Log::info('Start');
+            //Log::info('Start');
         }
 
         $p2 = session('point');
@@ -376,9 +405,10 @@ class TestoController extends Controller
         Http::get(env('APP_URL') . '/api/app/' . $hash . '/tracking/' . $p2[0] . '/' . $p2[1])->json();
 
         $request->session()->put('point', $p2);
-        Log::info($p2);
+        //Log::info($p2);
         return true;
     }
+
 
     private function randomMove(Request $request, $hash, $p2)
     {
@@ -393,26 +423,35 @@ class TestoController extends Controller
         $p2 = $this->randomStar($p2, $step);
         Http::get(env('APP_URL') . '/api/app/' . $hash . '/tracking/' . $p2[0] . '/' . $p2[1])->json();
         $request->session()->put('point', $p2);
-        Log::info($p2);
+        //Log::info($p2);
         return true;
     }
 
     private function star($x, $y, $w)
     {
-        Log::info('Distance:' . abs($x[0] - $y[0]) . ',' . abs($x[1] - $y[1]));
-        if (abs($x[0] - $y[0]) <= $w || abs($x[1] - $y[1]) <= $w) {
+        $w1 = $w;
+        $w2 = $w;
+        //Log::info('Distance:' . abs($x[0] - $y[0]) . ',' . abs($x[1] - $y[1]));
+        if (abs($x[0] - $y[0]) <= $w && abs($x[1] - $y[1]) <= $w) {
             return false;
         }
+        if (abs($x[0] - $y[0]) <= $w) {
+            $w1 = 0;
+        }
+        if (abs($x[1] - $y[1]) <= $w) {
+            $w2 = 0;
+        }
+
         return [
-            ($x[0] > $y[0]) ? $y[0] + $w : $y[0] - $w,
-            ($x[1] > $y[1]) ? $y[1] + $w : $y[1] - $w,
+            ($x[0] > $y[0]) ? $y[0] + $w1 : $y[0] - $w1,
+            ($x[1] > $y[1]) ? $y[1] + $w2 : $y[1] - $w2,
         ];
     }
 
     private function randomStar($y, $w)
     {
-        Log::info('Random:');
-        Log::info($y);
+        //Log::info('Random:');
+        //Log::info($y);
         return [
             $y[0] + $w,
             $y[1] + $w,

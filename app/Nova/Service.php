@@ -96,7 +96,7 @@ class Service extends Resource
             Text::make(__('Vehicle'), 'vehicle_id', function () {
                 return Vehicle::withoutGlobalScope('ref')->find($this->vehicle_id)->title;
             })->sortable()->onlyOnIndex(),
-            BelongsToMany::make(__('Queue'), 'queues', 'App\Nova\Queue')->hideWhenCreating()
+            BelongsToMany::make(__('Drivers'))->hideWhenCreating()
 
 
 

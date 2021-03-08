@@ -36,7 +36,7 @@ Route::get('/loaderio-7c0679154a4aa40544f62c84da1ffa48', function () {
 
     echo 'loaderio-7c0679154a4aa40544f62c84da1ffa48';
 });
-Route::get('/move/{s}', 'TestoController@move');
+Route::get('/move/{s}/{hash?}', 'TestoController@move');
 
 Route::get('/test', 'TestoController@test')->name('test.index');
 Route::post('/test', 'TestoController@create')->name('test.create');
@@ -49,6 +49,8 @@ Route::get('/test/driver/accept/{driver_id}', 'TestoController@driverAccept')->n
 Route::get('/test/driver/reject', 'TestoController@driverReject')->name('test.driver.reject');
 
 Route::post('/test/driver/tracking', 'TestoController@tracking')->name('test.tracking');
+Route::get('/test/{hash}/join', 'TestoController@join')->name('test.join');
+Route::get('/test/{hash}/detach', 'TestoController@detach')->name('test.detach');
 
 Route::post('/test/send/offer', 'TestoController@sendOffer')->name('test.send.offer');
 

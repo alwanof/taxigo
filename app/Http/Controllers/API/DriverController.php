@@ -11,6 +11,7 @@ use App\Queue;
 use App\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DriverController extends Controller
 {
@@ -68,6 +69,7 @@ class DriverController extends Controller
         $olat = $office->settings['coordinate_lat'];
         $olng = $office->settings['coordinate_lng'];
         $distance = cooDistance($olat, $olng, $lat, $lng) * 1000;
+
         $driver->lat = $lat;
         $driver->lng = $lng;
         $driver->distance = $distance;
@@ -75,13 +77,18 @@ class DriverController extends Controller
 
         //check if there is queue:
         //&& count($order->service->queues) > 0
+
         $qStatus = 0;
         $qservice = Service::where(['vehicle_id' => $driver->vehicle_id, 'user_id' => $office->id])->first();
+
         if ($qservice->qactive) {
             $queue = Queue::where(['driver_id' => $driver->id, 'service_id' => $qservice->id])->first();
+
             if ($queue) {
+
                 if ($driver->distance > $office->settings['queue_range']) {
-                    Http::get(env('APP_URL') . '/api/' . $driver->hash . '/queue/detach')->json();
+
+                    Http::get(env('APP_URL') . '/api/app/' . $driver->hash . '/queue/detach')->json();
                     $qStatus = 0;
                 } else {
                     $qStatus = 2;
@@ -92,6 +99,8 @@ class DriverController extends Controller
                 }
             }
         }
+
+
 
 
 
@@ -118,7 +127,7 @@ class DriverController extends Controller
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $service = Service::where('vehicle_id', $driver->vehicle_id)->firstOrFail();
-        $service->queues()->attach($driver->id);
+        $service->drivers()->attach($driver->id);
         return response(2, 200);
     }
     public function detach($hash)
@@ -126,7 +135,7 @@ class DriverController extends Controller
 
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $service = Service::where('vehicle_id', $driver->vehicle_id)->firstOrFail();
-        $service->queues()->detach($driver->id);
+        $service->drivers()->detach($driver->id);
         return response(1, 200);
     }
 

@@ -2,7 +2,7 @@
 if (!function_exists('cooDistance')) {
     function cooDistance($lat_a, $lon_a, $lat_b, $lon_b)
     {
-        return 0;
+
 
         $delta_lat = $lat_b - $lat_a;
         $delta_lon = $lon_b - $lon_a;

@@ -25,8 +25,12 @@ class Service extends Model
     }
 
 
-    public function queues()
-    {
+    /*public function queues(){
         return $this->belongsToMany(Driver::class, 'queues', 'service_id', 'driver_id');
+    }*/
+
+    public function drivers()
+    {
+        return $this->belongsToMany(Driver::class, 'queues');
     }
 }

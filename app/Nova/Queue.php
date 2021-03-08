@@ -2,8 +2,11 @@
 
 namespace App\Nova;
 
+use App\Driver;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Queue extends Resource
@@ -41,6 +44,8 @@ class Queue extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
+
+
         ];
     }
 

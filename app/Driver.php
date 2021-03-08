@@ -32,4 +32,8 @@ class Driver extends Model
     {
         return $this->belongsTo(Vehicle::class);
     }
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'queues');
+    }
 }
