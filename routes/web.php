@@ -25,6 +25,7 @@ use Parziphal\Parse\Auth\UserModel;
 |
 */
 
+
 Route::get('/', function () {
 
 

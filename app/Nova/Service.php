@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
@@ -90,8 +91,12 @@ class Service extends Resource
                 }
                 return $options;
             })->onlyOnForms(),
-            Text::make(__('Queue_Title'), 'qtitle'),
-            Boolean::make(__('Queue_Active'), 'qactive')->withMeta(["value" => 0]),
+            /* ->rules('required', Rule::unique('services')->where(function ($query) use ($request) {
+                    return $query->where('vehicle_id', $request->input('vehicle_id'))
+                        ->where('user_id', $request->input('user_id'));
+                })),*/
+            //Text::make(__('Queue_Title'), 'qtitle'),
+            Boolean::make(__('Queue_Active'), 'qactive'),
             Boolean::make(__('Active'), 'active')->withMeta(["value" => 1]),
             Text::make(__('Vehicle'), 'vehicle_id', function () {
                 return Vehicle::withoutGlobalScope('ref')->find($this->vehicle_id)->title;
