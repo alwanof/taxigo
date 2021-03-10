@@ -90,11 +90,8 @@ class Service extends Resource
                     $options[$vehicle->id] = $vehicle->title;
                 }
                 return $options;
-            })->onlyOnForms(),
-            /* ->rules('required', Rule::unique('services')->where(function ($query) use ($request) {
-                    return $query->where('vehicle_id', $request->input('vehicle_id'))
-                        ->where('user_id', $request->input('user_id'));
-                })),*/
+            })->onlyOnForms()
+                ->rules('required', Rule::unique('services', 'vehicle_id')->where('user_id', auth()->user()->id)),
             //Text::make(__('Queue_Title'), 'qtitle'),
             Boolean::make(__('Queue_Active'), 'qactive'),
             Boolean::make(__('Active'), 'active')->withMeta(["value" => 1]),

@@ -54563,7 +54563,7 @@ Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_native_notification__["a" /* default */]
             // Parse Here
             var Parse = __webpack_require__(320);
             Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-            Parse.serverURL = "https://smartaxi.b4a.io";
+            Parse.serverURL = "https://taxigo.b4a.io";
 
             var Client = new Parse.LiveQueryClient({
                 applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',

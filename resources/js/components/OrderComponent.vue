@@ -125,20 +125,20 @@
 
 <script>
   // Parse Here
-const Parse = require('parse');
-Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-Parse.serverURL = "https://smartaxi.b4a.io";
+//const Parse = require('parse');
+//Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
+//Parse.serverURL = "https://smartaxi.b4a.io";
 
-var Client = new Parse.LiveQueryClient({
+/*var Client = new Parse.LiveQueryClient({
     applicationId: 'REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV',
     serverURL: 'wss://' + 'smartaxi.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
     javascriptKey: 'VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn'
-});
+});*/
 
-const query = new Parse.Query("Stream");
-query.equalTo("model", "Order");
-Client.open();
-var subscription = Client.subscribe(query);
+//const query = new Parse.Query("Stream");
+//query.equalTo("model", "Order");
+//Client.open();
+//var subscription = Client.subscribe(query);
  import json from '../../lang/app.json';
     export default {
         name:"Order-Component",
@@ -164,6 +164,20 @@ var subscription = Client.subscribe(query);
                return '-';
             },
             listen(){
+                const Parse = require('parse');
+                Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
+                Parse.serverURL = "https://taxigo.b4a.io";
+
+                var Client = new Parse.LiveQueryClient({
+                    applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
+                    serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
+                    javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+                });
+
+                const query = new Parse.Query("Stream");
+                query.equalTo("model", "Order");
+                Client.open();
+                var subscription = Client.subscribe(query);
                 subscription.on("create", (feedDoc) => {
                     //console.log(feedDoc.attributes);
                     let index = (this.feed.id==feedDoc.attributes.pid);
@@ -204,47 +218,47 @@ var subscription = Client.subscribe(query);
             var label='-';
                 switch (status) {
                     case 0:
-                        label=this.trans('New');
-                        break;
-                    case 1:
-                        label=this.trans('Accepted');
-                        break;
-                    case 2:
-                        label=this.trans('Waiting Driver Approve');
-                        break;
-                    case 21:
-                        label=this.trans('On the way');
-                        break;
-                    case 22:
-                        label=this.trans('Trip Started');
+                    label=this.trans('New');
                     break;
+                case 1:
+                    label=this.trans('Accepted');
+                    break;
+                case 2:
+                    label=this.trans('Waiting Driver Approve');
+                    break;
+                case 21:
+                    label=this.trans('On the way');
+                    break;
+                case 22:
+                        icon='far fa-caret-square-right';
+                        break;
                     case 3:
-                        label=this.trans('Waiting Customer Approve');
+                        icon='fas fa-user-clock';
                         break;
                     case 9:
-                        label=this.trans('Done');
+                        icon='fas fa-check-double';
                         break;
                     case 90:
-                        label=this.trans('Trip Failed');
+                        icon='fas fa-exclamation-triangle';
+                        break;
+                case 91:
+                    label=this.trans('Office Rejected');
                     break;
-                    case 91:
-                        label=this.trans('Office Rejected');
-                        break;
-                    case 92:
-                        label=this.trans('Customer Rejected');
-                        break;
-                    case 93:
-                        $label=this.trans('No-Res. from Driver');
-                        break;
-                    case 94:
-                        label=this.trans('No-Res. from Customer');
-                        break;
-                    case 95:
-                        label=this.trans('Canceled');
-                        break;
-                    case 99:
-                        label=this.trans('Canceled from Customer');
-                        break;
+                case 92:
+                    label=this.trans('Customer Rejected');
+                    break;
+                case 93:
+                    $label=this.trans('No-Res. from Driver');
+                    break;
+                case 94:
+                    label=this.trans('No-Res. from Customer');
+                    break;
+                 case 95:
+                    label=this.trans('Canceled');
+                    break;
+                case 99:
+                    label=this.trans('Canceled from Customer');
+                    break;
 
                     default:
                         break;

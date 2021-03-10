@@ -26,7 +26,7 @@ Route::get('/testoo', function () {
 
 
 
-Route::get('/drivers/{user}', 'API\DriverController@getUserDrivers');
+Route::get('/drivers/{user}', 'API\DriverController@getUserDrivers'); //updated;
 
 Route::get('fetch/drivers/{driver}', 'API\DriverController@getDriver');
 

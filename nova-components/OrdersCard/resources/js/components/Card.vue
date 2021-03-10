@@ -230,7 +230,7 @@ export default {
              // Parse Here
             const Parse = require('parse');
             Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-            Parse.serverURL = "https://smartaxi.b4a.io";
+            Parse.serverURL = "https://taxigo.b4a.io";
 
             var Client = new Parse.LiveQueryClient({
                 applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',

@@ -18,15 +18,15 @@
 
 <script>
   // Parse Here
-const Parse = require('parse');
-Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-Parse.serverURL = "https://smartaxi.b4a.io";
+//const Parse = require('parse');
+ //Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
+//Parse.serverURL = "https://smartaxi.b4a.io";
 
-var Client = new Parse.LiveQueryClient({
-    applicationId: 'REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV',
-    serverURL: 'wss://' + 'smartaxi.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
-    javascriptKey: 'VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn'
-});
+/*var Client = new Parse.LiveQueryClient({
+                applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
+                serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
+                javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+            });*/
 
 
 
@@ -61,6 +61,15 @@ export default {
 
         },
         listen(){
+            const Parse = require('parse');
+            Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
+            Parse.serverURL = "https://taxigo.b4a.io";
+
+            var Client = new Parse.LiveQueryClient({
+                applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
+                serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
+                javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+            });
             const query = new Parse.Query("Stream");
             query.equalTo("model", "Driver");
             query.equalTo("meta.hash", this.driver.hash);

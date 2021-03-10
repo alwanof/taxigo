@@ -20,10 +20,14 @@ class DriverController extends Controller
         $user = User::findOrFail($user);
         switch ($user->level) {
             case 2:
-                return Driver::where('user_id', $user->id)->where('busy', '>', 0)->get();
+                return Driver::where('user_id', $user->id)
+                    ->where('busy', '>', 0)
+                    ->get();
                 break;
             case 1:
-                return Driver::where('parent', $user->id)->where('busy', '>', 0)->get();
+                return Driver::where('parent', $user->id)
+                    ->where('busy', '>', 0)
+                    ->get();
                 break;
         }
         return Driver::all();
@@ -57,7 +61,7 @@ class DriverController extends Controller
             ];
             $order->distance = $this->orderMetric($coordinates, $order->distance);
             $order->duration = $order->duration + diffSeconds($driver->updated_at);
-            $order->total = $order->total + $order->orderTotal($order->distance, $order->duration);
+            $order->total = $order->orderTotal($order->distance, $order->duration);
 
             //if ($order->service->plan != 'OFFER') {}
 
@@ -99,11 +103,6 @@ class DriverController extends Controller
                 }
             }
         }
-
-
-
-
-
 
         Stream::create([
             'pid' => $driver->id,

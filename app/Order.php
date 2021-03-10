@@ -69,9 +69,11 @@ class Order extends Model
 
     public function getDriversAttribute()
     {
+        $vehicle_id = $this->service->vehicle_id;
         $block = explode('--', $this->block);
         $drivers = Driver::where('user_id', $this->user_id)
             ->where('busy', 2)
+            ->where('vehicle_id', $vehicle_id)
             ->whereNotIn('id', $block)
             ->get();
 
