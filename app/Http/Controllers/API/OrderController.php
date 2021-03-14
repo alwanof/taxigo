@@ -20,7 +20,7 @@ class OrderController extends Controller
 
             return
                 Order::with('service')->where('user_id', $user->id)
-                ->whereIn('status', [0, 1, 12, 2, 21, 3])
+                ->whereIn('status', [0, 1, 12, 2, 21, 22, 3])
                 ->orderBy('updated_at', 'DESC')
                 ->get();
         }

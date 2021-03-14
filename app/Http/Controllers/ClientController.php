@@ -43,15 +43,15 @@ class ClientController extends Controller
     {
 
         $response = Http::withHeaders([
-            'X-Parse-Application-Id' => 'REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV',
-            'X-Parse-REST-API-Key' => 'ozmiEzNHJIAb3EqCD9lislhOC5dPsC0OS18DFJ6j',
+            'X-Parse-Application-Id' => env('PARSE_APP_ID'),
+            'X-Parse-REST-API-Key' => env('PARSE_REST_KE'),
             'Content-Type' => 'application/json'
         ])->post('https://parseapi.back4app.com/functions/gettoken', [
             'hash' => $token,
         ]);
 
         try {
-            $SERVER_API_KEY = 'AAAAwpX5cTo:APA91bG5qS4xNQCAdOxn8N2tVhkFR7nHsk8smxNTgw-Lh-ceWtxuYXwdhsGadenH3wrrKsA96pg5KDu7cA9JssEyp_LjKA99xEYpernypzDbVFqqzLTO8BLpyALDLcnwAhNKCXmHCD4s';
+            $SERVER_API_KEY = env('NOTI_GOOGLE_KEY');
             $data = [
                 "registration_ids" => [
                     $response['result']['token']
@@ -101,6 +101,11 @@ class ClientController extends Controller
 
     public function composse(Request $request)
     {
+        $parseKeys = [
+            'PARSE_APP_ID' => env('PARSE_APP_ID'),
+            'PARSE_JS_KEY' => env('PARSE_JS_KEY'),
+            'PARSE_SERVER_LQ_URL' => env('PARSE_SERVER_LQ_URL')
+        ];
 
         $hash = explode('%&', $request->hash);
         $office = User::findOrFail($hash[0]);
@@ -113,7 +118,7 @@ class ClientController extends Controller
         // Oops I'v found an old order running
         if ($oldOrder > 0) {
             $order = $oldOrder = Order::where('session', $session)->firstOrFail();
-            return view('client.order', compact(['office', 'agent', 'order', 'lang']));
+            return view('client.order', compact(['office', 'agent', 'order', 'lang', 'parseKeys']));
         }
         // Create a new Order
 
@@ -150,7 +155,7 @@ class ClientController extends Controller
             'action' => 'C',
             'meta' => ['office' => $order->office->id, 'drivers' => $driverHashs, 'action' => $action]
         ]);
-        return view('client.order', compact(['office', 'agent', 'order', 'lang']));
+        return view('client.order', compact(['office', 'agent', 'order', 'lang', 'parseKeys']));
     }
 
     private function est_stuff($order)

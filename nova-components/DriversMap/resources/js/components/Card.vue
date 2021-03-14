@@ -83,13 +83,13 @@ export default {
         },
         listen(){
             const Parse = require('parse');
-            Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-            Parse.serverURL = "https://taxigo.b4a.io";
+            Parse.initialize(this.card.PARSE.PARSE_APP_ID, this.card.PARSE.PARSE_JS_KEY);
+            Parse.serverURL = this.card.PARSE.PARSE_SERVER_URL;
 
             var Client = new Parse.LiveQueryClient({
-                applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
-                serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
-                javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+                applicationId: this.card.PARSE.PARSE_APP_ID,
+                serverURL: 'wss://' + this.card.PARSE.PARSE_SERVER_LQ_URL, // Example: 'wss://livequerytutorial.back4app.io'
+                javascriptKey: this.card.PARSE.PARSE_JS_KEY
             });
 
                 const query = new Parse.Query("Stream");

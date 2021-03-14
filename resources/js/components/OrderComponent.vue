@@ -75,11 +75,11 @@
                 <div class="text-muted">
                     {{trans('Your Trip')}}
 
-                    <span class="float-right h2 text-danger font-bold" v-show="feed.offer">
+                    <span class="float-right h2 text-danger font-bold" v-show="feed.total">
                         <div class="spinner-grow text-danger" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
-                        {{feed.offer}} {{office.settings.currency}}
+                        {{feed.total}} {{office.settings.currency}}
                     </span>
                 </div>
             </div>
@@ -116,7 +116,7 @@
             </div>
             <hr>
             <div v-if="feed.status==21">
-                <tracking-component :driver="feed.driver"></tracking-component>
+                <tracking-component :parse="parse" :driver="feed.driver"></tracking-component>
 
             </div>
 
@@ -142,7 +142,7 @@
  import json from '../../lang/app.json';
     export default {
         name:"Order-Component",
-        props:['office','agent','order','lang'],
+        props:['office','agent','order','lang','parse'],
         data() {
             return {
                 feed:null,
@@ -153,6 +153,7 @@
         created() {
             this.feed=this.order;
             this.listen();
+            //console.log('here');
 
         },
         methods: {
@@ -165,13 +166,13 @@
             },
             listen(){
                 const Parse = require('parse');
-                Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-                Parse.serverURL = "https://taxigo.b4a.io";
+                Parse.initialize(this.parse.PARSE_APP_ID, this.parse.PARSE_JS_KEY);
+                Parse.serverURL = this.parse.PARSE_SERVER_URL;
 
                 var Client = new Parse.LiveQueryClient({
-                    applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
-                    serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
-                    javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+                    applicationId: this.parse.PARSE_APP_ID,
+                    serverURL: 'wss://' + this.parse.PARSE_SERVER_LQ_URL, // Example: 'wss://livequerytutorial.back4app.io'
+                    javascriptKey: this.parse.PARSE_JS_KEY
                 });
 
                 const query = new Parse.Query("Stream");
@@ -229,18 +230,18 @@
                 case 21:
                     label=this.trans('On the way');
                     break;
-                case 22:
-                        icon='far fa-caret-square-right';
-                        break;
-                    case 3:
-                        icon='fas fa-user-clock';
-                        break;
-                    case 9:
-                        icon='fas fa-check-double';
-                        break;
-                    case 90:
-                        icon='fas fa-exclamation-triangle';
-                        break;
+                 case 22:
+                    label=this.trans('Trip Started');
+                    break;
+                case 3:
+                    label=this.trans('Waiting Customer Approve');
+                    break;
+                case 9:
+                    label=this.trans('Done');
+                    break;
+                case 90:
+                    label=this.trans('Trip Failed');
+                    break;
                 case 91:
                     label=this.trans('Office Rejected');
                     break;

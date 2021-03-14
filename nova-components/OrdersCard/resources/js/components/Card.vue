@@ -36,10 +36,10 @@
 
                             <span v-if="order.to_lat>0 && order.to_lng>0 && order.from_lat>0 && order.from_lng>0">
                                 <i class="fas fa-map-marker-alt"></i><span style="white-space: nowrap;" :title="order.to_address"> {{order.to_address.substring(0, 32)}}</span><br>
-                                <i class="fas fa-map-marked-alt"></i> {{distance(order.from_lat,order.from_lng,order.to_lat,order.to_lng,'K')}}KM
-                            </span><br>
-                            <span v-show="order.offer">
-                                <i class="fas fa-comments-dollar"></i> {{order.offer}} {{card.authUser.settings['currency']}}
+                                <i class="fas fa-map-marked-alt"></i> {{parseFloat(order.est_distance/1000).toFixed(2) }}KM <i class="far fa-clock"></i> {{Math.round(order.est_time/60)}}m
+                            </span>
+                            <span v-show="order.total">
+                                <i class="fas fa-comments-dollar"></i> {{order.total}} {{card.authUser.settings['currency']}}
                             </span>
 
 
@@ -47,14 +47,12 @@
                         </td>
                         <td>
                              <i class="far fa-clock"></i> {{convertUTCDateToLocalDate(new Date(order.created_at))}}
-
+                            <br>
                             <span v-show="order.driver">
                                 <i class="fas fa-taxi"></i> {{(order.driver)?order.driver.name:''}}
                             </span>
                             <br>
                            <span style="font-weight:bold">{{statusLabel(order.status)}}</span>
-
-
 
                         </td>
                         <td >
@@ -74,7 +72,7 @@
                             <span class="m-2" v-if="order.status==1">
                                 <select name="driver" v-model="driver" class="w-50 form-control form-input form-input-bordered">
                                     <option value="0" selected disabled>Select Driver</option>
-                                    <option v-for="driver in order.drivers" :key="driver.id" :value="driver.id">{{driver.name}}({{driver.distance}}km)</option>
+                                    <option v-for="driver in order.drivers" :key="driver.id" :value="driver.id">{{driver.name}}({{(driver.distance/1000).toFixed(2)}}K)</option>
 
                                 </select>
                                 <button class="btn btn-default btn-primary mr-4" @click="selectDriver(order)">{{__("Apply")}}</button>
@@ -85,10 +83,14 @@
                                     <i class="fas fa-undo"></i> {{__("UNDO")}}
                                 </button>
                             </span>
+                            <div class="w3-light-grey mt-2" v-if="order.status==21">
+                                <div class="w3-blue" :style="'height:5px;width:'+driverComplete(order)+'%'"></div>
+                            </div>
+                            <div class="w3-light-grey mt-2" v-if="order.status==22">
+                                <div class="w3-green" :style="'height:5px;width:'+orderComplete(order)+'%'"></div>
+                            </div>
 
                         </td>
-
-
                     </tr>
 
                 </tbody>
@@ -138,16 +140,34 @@ export default {
             orders:[],
             offer:0,
             driver:0,
+            progress:[],
             url:window.location.hostname,
             loading:false
 
         }
     },
     created() {
+        //this.getOrders();
         this.listen("Order");
+
 
     },
     methods: {
+        driverComplete(order){
+            var driverDistance=this.distance(order.driver.lat,order.driver.lng,order.from_lat,order.from_lng,'K')*1000;
+            console.log(driverDistance);
+            if(driverDistance<2000){
+                var result=100-Math.round(driverDistance*1/20);;
+                return (result>100)?100:result;
+
+            }
+            return 0;
+        },
+        orderComplete(order){
+            var driverDistance=order.distance;
+            var result=Math.round(driverDistance*100/order.est_distance);
+            return (result>100)?100:result;
+        },
         Notify(title,body){
             var notification = new Notification(title, {
                         icon: 'https://www.kindpng.com/picc/m/169-1699400_svg-png-icon-free-android-notification-icon-png.png',
@@ -229,13 +249,13 @@ export default {
         listen(){
              // Parse Here
             const Parse = require('parse');
-            Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-            Parse.serverURL = "https://taxigo.b4a.io";
+            Parse.initialize(this.card.PARSE.PARSE_APP_ID, this.card.PARSE.PARSE_JS_KEY);
+            Parse.serverURL = this.card.PARSE.PARSE_SERVER_URL;
 
             var Client = new Parse.LiveQueryClient({
-                applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
-                serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
-                javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+                applicationId: this.card.PARSE.PARSE_APP_ID,
+                serverURL: 'wss://' + this.card.PARSE.PARSE_SERVER_LQ_URL, // Example: 'wss://livequerytutorial.back4app.io'
+                javascriptKey: this.card.PARSE.PARSE_JS_KEY
             });
             const streamQuery = new Parse.Query("Stream");
             streamQuery.equalTo("model", "Order");
@@ -425,4 +445,7 @@ export default {
     },
 }
 </script>
+<style>
+    @import url('https://www.w3schools.com/w3css/4/w3.css');
+</style>
 

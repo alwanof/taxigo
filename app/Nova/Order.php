@@ -24,7 +24,12 @@ use Muradalwan\DriversMap\DriversMap;
 use Muradalwan\OrdersCard\OrdersCard;
 use Muradalwan\OrderStream\OrderStream;
 use Illuminate\Support\Str;
+use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\Line;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Sparkline;
+use Laravel\Nova\Fields\Stack;
 
 class Order extends Resource
 {
@@ -93,17 +98,18 @@ class Order extends Resource
             Hidden::make('to_lat')->default(0),
             Hidden::make('to_lng')->default(0),
             Hidden::make('Status')->default(1),
-
-            Text::make(__('Name'), 'name')
-                ->rules('required', 'max:255'),
-            Text::make(__('Email'), 'email')->hideWhenCreating(),
-            PhoneNumber::make(__('Phone'), 'phone')
-                ->withCustomFormats('+218 (##[#]) ### ####')
-                ->withMeta([
-                    'extraAttributes' => [
-                        'style' => 'direction:ltr !important'
-                    ]
-                ]),
+            Stack::make(__('Name'), [
+                Line::make(__('Name'), 'name')->asHeading()
+                    ->rules('required', 'max:255'),
+                Line::make(__('Email'), 'email')->asSmall()->hideWhenCreating(),
+                PhoneNumber::make(__('Phone'), 'phone')
+                    ->withCustomFormats('+218 (##[#]) ### ####')
+                    ->withMeta([
+                        'extraAttributes' => [
+                            'style' => 'direction:ltr !important'
+                        ]
+                    ]),
+            ]),
             Text::make(__('Address'), 'from_address')
                 ->rules('required', 'max:255')
                 ->onlyOnForms(),
@@ -123,6 +129,26 @@ class Order extends Resource
 
                 return $options;
             })->creationRules('required')->onlyOnForms(),
+            Text::make(_('Updated At'), 'updated_at')
+                ->displayUsing(function ($lastActive) {
+                    return $lastActive->diffForHumans();
+                })
+                ->exceptOnForms(),
+            Text::make(_('Distance'), 'distance')
+                ->displayUsing(function ($distance) {
+                    return round($distance / 1000, 2) . 'K';
+                })
+                ->exceptOnForms(),
+            Text::make(_('Duration'), 'duration')
+                ->displayUsing(function ($duration) {
+                    return round($duration / 60, 0) . 'M';
+                })
+                ->exceptOnForms(),
+            Text::make(_('Total'), 'total')
+                ->exceptOnForms(),
+            Text::make(_('From'), 'from_address')->onlyOnDetail(),
+            Text::make(_('To'), 'to_address')->onlyOnDetail(),
+
             BelongsTo::make(__('Driver'), 'driver', 'App\Nova\Driver')->hideWhenCreating(),
             BelongsTo::make(__('Office'), 'office', 'App\Nova\User')->hideWhenCreating(),
             BelongsTo::make(__('Agent'), 'actor', 'App\Nova\User')->hideWhenCreating(),
@@ -139,15 +165,20 @@ class Order extends Resource
      */
     public function cards(Request $request)
     {
+        $parseKeys = [
+            'PARSE_APP_ID' => env('PARSE_APP_ID'),
+            'PARSE_JS_KEY' => env('PARSE_JS_KEY'),
+            'PARSE_SERVER_LQ_URL' => env('PARSE_SERVER_LQ_URL')
+        ];
         return [
-            (new OrdersCard)->authUser()->canSee(function ($request) {
+            (new OrdersCard)->withMeta(['PARSE' => $parseKeys])->authUser()->canSee(function ($request) {
 
                 if (auth()->user()->level != 2) {
                     return false;
                 }
                 return true;
             }),
-            (new DriversMap)->authUser()->canSee(function ($request) {
+            (new DriversMap)->withMeta(['PARSE' => $parseKeys])->authUser()->canSee(function ($request) {
 
                 if (auth()->user()->level != 2) {
                     return false;

@@ -32,7 +32,7 @@
 
 export default {
     name: "TrackingMap",
-    props:['driver'],
+    props:['driver','parse'],
     data() {
         return {
             //feed:null,
@@ -46,8 +46,8 @@ export default {
     },
     created() {
         this.listen();
-        //this.feed=this.driver;
         this.track(this.driver);
+        console.log(this.parse);
 
 
 
@@ -62,13 +62,13 @@ export default {
         },
         listen(){
             const Parse = require('parse');
-            Parse.initialize("REhnNlzTuS88KmmKaNuqwWZ3D3KNYurvNIoWHdYV", "VSDqMVaQWg5HDnFM0oAezLdeDRdfMvdZKhgW7THn");
-            Parse.serverURL = "https://taxigo.b4a.io";
+            Parse.initialize(this.parse.PARSE_APP_ID, this.parse.PARSE_JS_KEY);
+            Parse.serverURL = this.parse.PARSE_SERVER_URL;
 
             var Client = new Parse.LiveQueryClient({
-                applicationId: '8JpwjFN2FLqHdsqJrOxDNw6o6olRqaCmltPUH0Ou',
-                serverURL: 'wss://' + 'taxigo.b4a.io', // Example: 'wss://livequerytutorial.back4app.io'
-                javascriptKey: 'JtINjkHM1LxUyzISBpRD8Bngvvv3pLMDPlgLdKAR'
+                applicationId: this.parse.PARSE_APP_ID,
+                serverURL: 'wss://' + this.parse.PARSE_SERVER_LQ_URL, // Example: 'wss://livequerytutorial.back4app.io'
+                javascriptKey: this.parse.PARSE_JS_KEY
             });
             const query = new Parse.Query("Stream");
             query.equalTo("model", "Driver");

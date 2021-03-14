@@ -68,12 +68,17 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function cards()
     {
+        $parseKeys = [
+            'PARSE_APP_ID' => env('PARSE_APP_ID'),
+            'PARSE_JS_KEY' => env('PARSE_JS_KEY'),
+            'PARSE_SERVER_LQ_URL' => env('PARSE_SERVER_LQ_URL')
+        ];
         $metrics = [];
         $level = Auth::user()->level;
         switch ($level) {
             case 0:
                 $metrics = [
-                    (new DriversMap)->authUser(),
+                    (new DriversMap)->withMeta(['PARSE' => $parseKeys])->authUser(),
                     new UserCount(),
                     new DriverCount(),
                     new DriverTrend(),
@@ -84,7 +89,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 break;
             case 1:
                 $metrics = [
-                    (new DriversMap)->authUser(),
+                    (new DriversMap)->withMeta(['PARSE' => $parseKeys])->authUser(),
                     new UserCount(),
                     new DriverCount(),
                     new DriverTrend(),
@@ -98,7 +103,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 break;
             case 2:
                 $metrics = [
-                    (new DriversMap)->authUser(),
+                    (new DriversMap)->withMeta(['PARSE' => $parseKeys])->authUser(),
                     new DriverCount(),
                     new DriverTrend(),
                     new DriverPartition(),

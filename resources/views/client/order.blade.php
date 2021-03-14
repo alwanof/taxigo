@@ -6,7 +6,7 @@
     <div class="container text-center">
         <img class="img-thumbnail rounded-circle mb-2" src="/storage/{{ $office->avatar }}" alt="" width="100">
         <h1 class="h3 mb-3 font-weight-normal"><span class="badge badge-secondary">{{ $office->name }}</span></h1>
-        <order-component :order="{{ json_encode($order) }}" :lang="{{ json_encode($lang) }}"
+        <order-component :parse="{{json_encode($parseKeys)}}" :order="{{ json_encode($order) }}" :lang="{{ json_encode($lang) }}"
             :office="{{ json_encode($office) }}" :agent="{{ json_encode($agent) }}">
         </order-component>
 

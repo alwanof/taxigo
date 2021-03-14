@@ -22,11 +22,13 @@ class DriverController extends Controller
             case 2:
                 return Driver::where('user_id', $user->id)
                     ->where('busy', '>', 0)
+                    ->orderBy('distance', 'ASC')
                     ->get();
                 break;
             case 1:
                 return Driver::where('parent', $user->id)
                     ->where('busy', '>', 0)
+                    ->orderBy('distance', 'ASC')
                     ->get();
                 break;
         }
