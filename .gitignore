@@ -5,6 +5,8 @@
 /vendor
 .env
 .env.backup
+/resources/views/vendor/nova/partials/footer.blade.php
+/resources/views/vendor/nova/partials/logo.blade.php
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

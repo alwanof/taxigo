@@ -11,24 +11,28 @@
         <img class="img-thumbnail rounded-circle mb-2" src="/storage/{{ $office->avatar }}" alt="" width="100">
         <h1 class="h3 mb-5 font-weight-normal">
             <span class="badge badge-secondary">{{ $office->name }}</span>
-            <br><small><i class="fas fa-phone-square-alt text-success mx-1"></i>{{ $office->settings['phone'] }}</small>
+            <small><a href="tel:{{ $office->settings['phone'] }}"><i
+                        class="fas fa-phone-square-alt text-success mx-1"></i></a></small>
 
         </h1>
 
         <form class="form-signin was-validated text-center" action="{{ route('client.dist') }}" method="POST">
             @csrf
-            @foreach ($office->services as $service)
-                <div class="form-check form-check-inline bg-white border p-2">
-                    <img class="img-fluid m-2" src="/storage/{{ $service->vehicle->avatar }}" alt="" width="42">
+            <div class="row mb-5">
 
-                    <div>
-                        <input class="form-check-input" type="radio" name="service_id" value="{{ $service->id }}"
-                            required>
-                        <label class="form-check-label">{{ $service->title }}</label>
+                @foreach ($office->services as $service)
+                    <div class="col-3">
+                        <img class="img-fluid m-2" src="/storage/{{ $service->vehicle->avatar }}" alt="" width="42">
+
+                        <div>
+                            <input class="form-check-input" type="radio" name="service_id" value="{{ $service->id }}"
+                                required>
+                            <label class="form-check-label">{{ $service->title }}</label>
+                        </div>
                     </div>
+                @endforeach
+            </div>
 
-                </div>
-            @endforeach
             <input type="hidden" name="from_lat" id="from_lat">
             <input type="hidden" name="from_lng" id="from_lng">
 
@@ -64,7 +68,7 @@
                         style="border: solid 1px #ced4da;background-color:#e9ecef;obacity:1"
                         placeholder="Enter your address" id="from_address" name="from_address" required readonly>
 
-                                                                                                                                                                                                                                                                                                                                    </textarea>
+                                                                                                                                                                                                                                                                                                                                                            </textarea>
                     <div style="display: block;width:100%;color:green">
                         {{ __('app.Address hint1') }}
                         <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}

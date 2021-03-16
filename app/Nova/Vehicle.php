@@ -60,7 +60,7 @@ class Vehicle extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             Avatar::make(__('Avatar'), 'avatar')->onlyOnIndex(),
-            AdvancedImage::make(__('Avatar'), 'avatar')->croppable(1 / 1)->resize(125)->disk('public')->path('vehicles')->hideFromIndex(),
+            AdvancedImage::make(__('Avatar'), 'avatar')->croppable(2 / 1)->resize(125)->disk('public')->path('vehicles')->hideFromIndex(),
             Text::make(__('Title'), 'title')
                 ->sortable()
                 ->rules('required', 'max:42'),
