@@ -86,7 +86,9 @@ class ClientController extends Controller
 
 
         $office = User::where('email', $office_email)->firstOrFail();
-
+        if (count($office->services) == 0) {
+            abort(403, 'You don\'t have any services, create a new one');
+        }
         $lang = $this->getLang($office->settings['lang']);
 
         if ($office->level != 2) abort(404);
@@ -101,6 +103,16 @@ class ClientController extends Controller
 
     public function composse(Request $request)
     {
+        $this->validate($request, [
+            'session' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'from_address' => 'required',
+            'from_lat' => 'required',
+            'from_lng' => 'required',
+            'service_id' => 'required',
+        ]);
         $parseKeys = [
             'PARSE_APP_ID' => env('PARSE_APP_ID'),
             'PARSE_JS_KEY' => env('PARSE_JS_KEY'),
