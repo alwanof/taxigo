@@ -10,6 +10,7 @@ use App\User;
 use App\Queue;
 use App\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -188,5 +189,37 @@ class DriverController extends Controller
         $distance = $oldDistance +
             (cooDistance($coordinate['oldLat'], $coordinate['oldLng'], $coordinate['newLat'], $coordinate['newLng']) * 1000);
         return round($distance, 0);
+    }
+
+    public function nearby($office, $lat, $lng, $service)
+    {
+        $est_distance = 0;
+        $est_time = 0;
+
+        $office = User::findOrFail($office);
+        $vehicle_id = Service::findOrFail($service)->vehicle_id;
+        $workRange = $office->settings['work_rang'];
+        //$driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=?  HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $workRange]);
+        $driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=? HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $vehicle_id, $workRange]);
+        if (count($driver) == 0) {
+            return [];
+        }
+        $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+            'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
+            'language' => 'en-US',
+            'mode' => 'DRIVING',
+            'origins' => $driver[0]->lat . ',' . $driver[0]->lng,
+            'destinations' => $lat . ',' . $lng,
+        ]);
+
+        if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
+            $est_distance = $response['rows'][0]['elements'][0]['distance']['value'];
+            $est_time = $response['rows'][0]['elements'][0]['duration']['value'];
+        }
+        return [
+            'driver' => $driver[0],
+            'distance' => $est_distance,
+            'time' => $est_time
+        ];
     }
 }

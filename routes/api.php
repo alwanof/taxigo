@@ -25,7 +25,6 @@ Route::get('/testoo', function () {
 
 
 
-
 Route::get('/drivers/{user}', 'API\DriverController@getUserDrivers'); //updated;
 
 Route::get('fetch/drivers/{driver}', 'API\DriverController@getDriver');
@@ -55,7 +54,7 @@ Route::get('/order/customer/approve/{order}', 'API\OrderController@customerAppro
 Route::get('/order/office/select/{driver}/to/{order}', 'API\OrderController@selectDriver');
 
 Route::get('/order/office/send/{offer}/to/{order}', 'API\OrderController@sendOffer');
-
+Route::get('/nearby/{office}/{lat}/{lng}/{service}', 'API\DriverController@nearby'); //new
 
 
 // API Mobile APP:

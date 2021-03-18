@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use Ctessier\NovaAdvancedImageField\AdvancedImage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\Avatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Slug;
@@ -66,7 +67,8 @@ class Vehicle extends Resource
                 ->rules('required', 'max:42'),
             Slug::make(__('Slug'), 'slug')
                 ->from('Title')
-                ->creationRules('unique:vehicles,slug')
+                //->creationRules('unique:vehicles,slug')
+                ->creationRules('required', Rule::unique('vehicles', 'slug')->where('user_id', auth()->user()->id))
                 ->hideFromIndex()
                 ->withMeta(['readonly' => true]),
         ];

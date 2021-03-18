@@ -91,7 +91,7 @@ class Service extends Resource
                 }
                 return $options;
             })->onlyOnForms()
-                ->rules('required', Rule::unique('services', 'vehicle_id')->where('user_id', auth()->user()->id)),
+                ->creationRules('required', Rule::unique('services', 'vehicle_id')->where('user_id', auth()->user()->id)),
             //Text::make(__('Queue_Title'), 'qtitle'),
             Boolean::make(__('Queue_Active'), 'qactive'),
             Boolean::make(__('Active'), 'active')->withMeta(["value" => 1]),
