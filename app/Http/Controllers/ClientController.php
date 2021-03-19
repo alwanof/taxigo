@@ -95,6 +95,7 @@ class ClientController extends Controller
         $agent = $office->parent;
         $session = session()->getId();
 
+
         $lang = $this->getLang($office->settings['lang']);
         //return App::getLocale();
         $mapCenter = [$office->settings['coordinate_lat'], $office->settings['coordinate_lng']];

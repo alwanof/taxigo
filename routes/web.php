@@ -40,6 +40,7 @@ Route::get('/loaderio-7c0679154a4aa40544f62c84da1ffa48', function () {
 Route::get('/move/{s}/{hash?}', 'TestoController@move');
 
 Route::get('/test', 'TestoController@test')->name('test.index');
+
 Route::post('/test', 'TestoController@create')->name('test.create');
 Route::get('/test/reset', 'TestoController@reset')->name('test.reset');
 Route::get('/test/office/accept', 'TestoController@officeAccept')->name('test.office.accept');
@@ -63,7 +64,7 @@ Route::get('/test/order/abort', 'TestoController@orderAbort')->name('test.order.
 Route::post('/test/order/complete', 'TestoController@orderComplete')->name('test.order.complete');
 
 // end Test
-
+Route::get('/clear', 'TerminatorController@clear')->name('clear');
 Route::get('/set/lang/{lang}', 'ClientController@setLang')->name('client.lang');
 
 Route::get('/taxi/{office_email}', 'ClientController@index')->name('client.create');
