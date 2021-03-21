@@ -112,10 +112,10 @@
                 $("#source").slideToggle();
             });
 
-            //var defaultLat = {!! json_encode($mapCenter[0]) !!};
-            //var defaultLng = {!! json_encode($mapCenter[1]) !!};
-            var defaultLat = 41.021011;
-            var defaultLng = 28.931812;
+            var defaultLat = {!! json_encode($mapCenter[0]) !!};
+            var defaultLng = {!! json_encode($mapCenter[1]) !!};
+            //var defaultLat = 41.021011;
+            //var defaultLng = 28.931812;
 
             var lp = new locationPicker('source', {
                 setCurrentPosition: true, // You can omit this, defaults to true
