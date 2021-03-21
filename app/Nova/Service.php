@@ -94,7 +94,7 @@ class Service extends Resource
                 ->creationRules('required', Rule::unique('services', 'vehicle_id')->where('user_id', auth()->user()->id)),
             //Text::make(__('Queue_Title'), 'qtitle'),
             Boolean::make(__('Queue_Active'), 'qactive'),
-            Boolean::make(__('Active'), 'active')->withMeta(["value" => 1]),
+            Boolean::make(__('Active'), 'active'),
             Text::make(__('Vehicle'), 'vehicle_id', function () {
                 return Vehicle::withoutGlobalScope('ref')->find($this->vehicle_id)->title;
             })->sortable()->onlyOnIndex(),

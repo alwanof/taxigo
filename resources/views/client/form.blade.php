@@ -1,88 +1,102 @@
-@extends('layouts.master')
+@extends('layouts.front')
 
 @section('title', 'create')
-
+@section('bodyClass', 'd-flex flex-column h-100')
 @section('content')
+    <main class="flex-shrink-0">
+        <div class="container pt-2">
+            <div class="row">
+                <div class="col">
+                    <img src="/images/logo-sm.png" class="mx-auto d-block" height="100"
+                        alt="{{ config('app.name', 'Project0') }}">
+                    <!-- Logo area-->
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <img src="/storage/{{ $office->avatar }}" class="mx-auto d-block" width="93" alt="logo">
+                        </div>
+                        <div class="col-9 border-bottom p-2 px-3">
+                            <h4>{{ $office->name }}</h4>
+                            <a href="tel:{{ $office->settings['phone'] }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-phone-alt"></i>
+                                {{ __('app.Call') }}
+                            </a>
 
-    <div>
-        <a href="/set/lang/ar">عربي</a> | <a href="/set/lang/en">English</a>
-    </div>
-    <div class="container text-center">
-        <img class="img-thumbnail rounded-circle mb-2" src="/storage/{{ $office->avatar }}" alt="" width="100">
-        <h1 class="h3 mb-5 font-weight-normal">
-            <span class="badge badge-secondary">{{ $office->name }}</span>
-            <small><a href="tel:{{ $office->settings['phone'] }}"><i
-                        class="fas fa-phone-square-alt text-success mx-1"></i></a></small>
-
-        </h1>
-
-        <form class="form-signin was-validated text-center" action="{{ route('client.dist') }}" method="POST">
-            @csrf
-            <div class="row mb-5">
-
-                @foreach ($office->services as $service)
-                    <div class="col-3">
-                        <img class="img-fluid m-2" src="/storage/{{ $service->vehicle->avatar }}" alt="" width="42">
-
-                        <div>
-                            <input class="form-check-input" type="radio" name="service_id" value="{{ $service->id }}"
-                                required>
-                            <label class="form-check-label">{{ $service->title }}</label>
                         </div>
                     </div>
-                @endforeach
-            </div>
+                    <form action="{{ route('client.dist') }}" method="POST">
+                        <input type="hidden" name="from_lat" id="from_lat">
+                        <input type="hidden" name="from_lng" id="from_lng">
 
-            <input type="hidden" name="from_lat" id="from_lat">
-            <input type="hidden" name="from_lng" id="from_lng">
+                        <input type="hidden" name="session" value="{{ $session }}">
+                        <input type="hidden" name="hash" value="{{ $office->id . '%&' . $session . '%&' . $agent->id }}">
+                        <div class="row mt-3 text-center">
+                            @foreach ($office->services as $service)
+                                @if ($service->active)
+                                    <div class="col-4">
+                                        <img src="/storage/{{ $service->vehicle->avatar }}" class="img-thumbnail"
+                                            alt="yellow">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="service_id"
+                                                value="{{ $service->id }}" required>
+                                            <label class="form-check-label">
+                                                {{ $service->title }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                        <div class="my-3">
+                            <label for="exampleInputEmail1"
+                                class="form-label text-muted">{{ __('app.Enter your name') }}</label>
+                            <input type="text" class="form-control" placeholder="{{ __('app.Enter your name') }}"
+                                name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1"
+                                class="form-label text-muted">{{ __('app.Enter your phone') }}</label>
+                            <input type="text" class="form-control" placeholder="{{ __('app.Enter your phone') }}"
+                                name="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">{{ __('app.Enter your email') }}</label>
+                            <input type="email" class="form-control" placeholder="{{ __('app.Enter your email') }}"
+                                name="email" required>
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="from_address" class="form-label text-muted">Current Location</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Enter your address" id="from_address"
+                                    name="from_address" required readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="confirmSource">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">
+                                {{ __('app.Address hint1') }}
+                                <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}
+                            </div>
+                        </div>
+                        <div id="source"></div>
+                        <div class="row">
+                            <div class="col-10 d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">{{ __('app.Continue') }}</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="submit" class="btn btn-light">
+                                    <i class="fas fa-sliders-h"></i>
+                                </button>
 
-            <input type="hidden" name="session" value="{{ $session }}">
-            <input type="hidden" name="hash" value="{{ $office->id . '%&' . $session . '%&' . $agent->id }}">
+                            </div>
+                        </div>
 
-            <div class="form-group">
 
-                <input type="text" class="form-control" placeholder="{{ __('app.Enter your name') }}" name="name"
-                    required>
-                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-            </div>
-            <div class="form-group">
-
-                <input type="text" class="form-control" placeholder="{{ __('app.Enter your phone') }}" name="phone"
-                    required>
-                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-            </div>
-            <div class="form-group">
-
-                <input type="text" class="form-control" placeholder="{{ __('app.Enter your email') }}" name="email"
-                    required>
-                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-            </div>
-            <div class="form-group">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-map-marker-alt text-primary" id="confirmSource"></i>
-                        </span>
-                    </div>
-                    <textarea type="text" class="form-control"
-                        style="border: solid 1px #ced4da;background-color:#e9ecef;obacity:1"
-                        placeholder="Enter your address" id="from_address" name="from_address" required readonly>
-
-                                                                                                                                                                                                                                                                                                                                                            </textarea>
-                    <div style="display: block;width:100%;color:green">
-                        {{ __('app.Address hint1') }}
-                        <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}
-                    </div>
-                    <div id="source"></div>
-
+                    </form>
                 </div>
-
-
             </div>
-            <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.Continue') }}</button>
-        </form>
-
-    </div>
+        </div>
+    </main>
 @endsection
 
 @section('js')
@@ -98,8 +112,11 @@
                 $("#source").slideToggle();
             });
 
-            var defaultLat = {!! json_encode($mapCenter[0]) !!};
-            var defaultLng = {!! json_encode($mapCenter[1]) !!};
+            //var defaultLat = {!! json_encode($mapCenter[0]) !!};
+            //var defaultLng = {!! json_encode($mapCenter[1]) !!};
+            var defaultLat = 41.021011;
+            var defaultLng = 28.931812;
+
             var lp = new locationPicker('source', {
                 setCurrentPosition: true, // You can omit this, defaults to true
                 lat: defaultLat,
@@ -118,10 +135,12 @@
 
                 //onIdlePositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
                 $.getJSON(
-                    'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + loc.lat + ',' + loc
+                    'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + loc.lat + ',' +
+                    loc
                     .lng +
                     '&key=AIzaSyANYVpeOpsNN4DqdKR4AKAyd03IQ3_9PvU',
                     function(result) {
+
                         //console.log({!! json_encode($mapCenter) !!});
                         document.getElementById('from_address').value = result.results[0]
                             .formatted_address;
@@ -139,67 +158,10 @@
 @section('css')
 
     <style>
-        html,
-        body {
-            height: 100%;
-        }
-
-
-
-        body {
-
-            align-items: center;
-            padding-top: 16px;
-            padding-bottom: 40px;
-            background-color: #f5f5f5;
-        }
-
-
-        #source {
-            width: 100%;
-            height: 300px;
-            display: none;
-        }
-
-        #dist {
-            width: 100%;
-            height: 300px;
-            display: none;
-        }
-
-        .form-signin {
-            width: 100%;
-
-            padding: 15px;
-            margin: auto;
-        }
-
-        .form-signin .checkbox {
-            font-weight: 400;
-        }
-
-        .form-signin .form-control {
-            position: relative;
-            box-sizing: border-box;
-            height: auto;
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        .form-signin .form-control:focus {
-            z-index: 2;
-        }
-
-        .form-signin input[type="email"] {
-            margin-bottom: -1px;
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        .form-signin input[type="password"] {
-            margin-bottom: 10px;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
+        .container {
+            width: auto;
+            max-width: 680px;
+            padding: 0 15px;
         }
 
         .bd-placeholder-img {
@@ -207,7 +169,6 @@
             text-anchor: middle;
             -webkit-user-select: none;
             -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
@@ -217,15 +178,26 @@
             }
         }
 
-        .badge-secondary {
-            color: #252525;
-            background-color: #d3d3d3;
+        .form-check-input:checked {
+            background-color: #fbb921;
+            border-color: #fbb921;
         }
 
-        .form-signin .form-control {
-            border: none;
-            border-bottom: solid #d3d3d3;
-            background-color: #f5f5f5;
+        .form-check .form-check-input {
+            float: left;
+            margin-left: 0em;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #fbb921;
+            border-color: #fbb921;
+        }
+
+        #source {
+            width: 100%;
+            height: 300px;
+            display: none;
         }
 
     </style>
