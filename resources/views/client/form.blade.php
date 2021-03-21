@@ -24,6 +24,7 @@
                         </div>
                     </div>
                     <form action="{{ route('client.dist') }}" method="POST">
+                        @csrf
                         <input type="hidden" name="from_lat" id="from_lat">
                         <input type="hidden" name="from_lng" id="from_lng">
 
@@ -120,16 +121,26 @@
             var lp = new locationPicker('source', {
                 setCurrentPosition: true, // You can omit this, defaults to true
                 lat: defaultLat,
-                lng: defaultLng
+                lng: defaultLng,
 
             }, {
-                zoom: 15 // You can set any google map options here, zoom defaults to 15
+                zoom: 15, // You can set any google map options here, zoom defaults to 15,
+                gestureHandling: "greedy",
+                mapTypeControl: false,
+                draggable: true,
+                disableDefaultUI: true,
+                zoomControl: false,
+                styles: [{
+                    stylers: [{
+                        saturation: -100
+                    }]
+                }]
             });
-
 
             google.maps.event.addListener(lp.map, 'idle', function(event) {
                 // Get current location and show it in HTML
                 var loc = lp.getMarkerPosition();
+
                 //lat = loc.lat;
                 //lng = loc.lng;
 
