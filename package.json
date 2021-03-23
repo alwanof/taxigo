@@ -36,6 +36,5 @@
     "dependencies": {
         "parse": "^2.16.0",
         "vue2-google-maps": "^0.10.7"
-
     }
 }

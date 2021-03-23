@@ -50,26 +50,27 @@
                         <div class="my-3">
                             <label for="exampleInputEmail1"
                                 class="form-label text-muted">{{ __('app.Enter your name') }}</label>
-                            <input type="text" class="form-control" placeholder="{{ __('app.Enter your name') }}"
-                                name="name" required>
+                            <input type="text" class="form-control" value="{{ $meta['name'] }}"
+                                placeholder="{{ __('app.Enter your name') }}" name="name" required>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputEmail1"
                                 class="form-label text-muted">{{ __('app.Enter your phone') }}</label>
-                            <input type="text" class="form-control" placeholder="{{ __('app.Enter your phone') }}"
-                                name="phone" required>
+                            <input type="text" class="form-control" value="{{ $meta['phone'] }}"
+                                placeholder="{{ __('app.Enter your phone') }}" name="phone" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted">{{ __('app.Enter your email') }}</label>
-                            <input type="email" class="form-control" placeholder="{{ __('app.Enter your email') }}"
-                                name="email" required>
+                            <input type="email" class="form-control" value="{{ $meta['email'] }}"
+                                placeholder="{{ __('app.Enter your email') }}" name="email" required>
                             <div class="form-text">We'll never share your email with anyone else.</div>
                         </div>
                         <div class="mb-3">
                             <label for="from_address" class="form-label text-muted">Current Location</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Enter your address" id="from_address"
-                                    name="from_address" required readonly>
+                                <input type="text" class="form-control" value="{{ $meta['address'] }}"
+                                    placeholder="Enter your address" id="from_address" name="from_address" required
+                                    readonly>
                                 <button class="btn btn-outline-secondary" type="button" id="confirmSource">
                                     <i class="fas fa-map-marker-alt"></i>
                                 </button>

@@ -83,7 +83,10 @@ class ClientController extends Controller
     public function index($office_email)
     {
 
-
+        $meta['name'] = (isset($_GET['name'])) ? $_GET['name'] : null;
+        $meta['phone'] = (isset($_GET['phone'])) ? $_GET['phone'] : null;
+        $meta['email'] = (isset($_GET['email'])) ? $_GET['email'] : null;
+        $meta['address'] = (isset($_GET['address'])) ? $_GET['address'] : null;
 
         $office = User::where('email', $office_email)->firstOrFail();
         if (count($office->services) == 0) {
@@ -99,7 +102,7 @@ class ClientController extends Controller
         $lang = $this->getLang($office->settings['lang']);
         //return App::getLocale();
         $mapCenter = [$office->settings['coordinate_lat'], $office->settings['coordinate_lng']];
-        return view('client.form', compact(['office', 'agent', 'session', 'lang', 'mapCenter']));
+        return view('client.form', compact(['office', 'agent', 'session', 'lang', 'mapCenter', 'meta']));
     }
 
     public function composse(Request $request)
