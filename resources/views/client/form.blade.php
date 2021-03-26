@@ -81,7 +81,7 @@
                             </div>
                         </div>
                         <div id="source"></div>
-                        <div class="row">
+                        <div class="row mt-3">
                             <div class="col-10 d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">{{ __('app.Continue') }}</button>
                             </div>

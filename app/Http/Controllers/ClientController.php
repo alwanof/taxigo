@@ -89,6 +89,7 @@ class ClientController extends Controller
         $meta['address'] = (isset($_GET['address'])) ? $_GET['address'] : null;
 
         $office = User::where('email', $office_email)->firstOrFail();
+
         if (count($office->services) == 0) {
             abort(403, 'You don\'t have any services, create a new one');
         }

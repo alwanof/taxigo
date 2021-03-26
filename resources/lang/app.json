@@ -22,7 +22,9 @@
         "Canceled":"Canceled",
         "Canceled from Customer":"Canceled from Customer",
         "New":"New",
-        "Note":"Note"
+        "Note":"Note",
+        "TOTAL AMOUNNT":"TOTAL AMOUNNT",
+        "CALL":"CALL"
 
     },
     "ar": {
@@ -48,7 +50,9 @@
         "Canceled":"ملغى",
         "Canceled from Customer":"تم الالغاء من العميل",
         "New":"جديد",
-        "Note":"ملاحظات"
+        "Note":"ملاحظات",
+        "TOTAL AMOUNNT":"السعر الاجمالي",
+        "CALL":"اتصال"
     }
 
 

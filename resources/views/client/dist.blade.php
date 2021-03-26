@@ -1,69 +1,83 @@
-@extends('layouts.master')
+@extends('layouts.front')
 
 @section('title', 'create')
-
+@section('bodyClass', 'd-flex flex-column h-100')
 @section('content')
 
-    <div class="container text-center">
-        <img class="img-thumbnail rounded-circle mb-2" src="/storage/{{ $office->avatar }}" alt="" width="100">
-        <h1 class="h3 mb-5 font-weight-normal"><span class="badge badge-secondary">{{ $office->name }}</span></h1>
+    <main class="flex-shrink-0">
+        <div class="container pt-2">
+            <div class="row">
+                <div class="col">
+                    <img src="/images/logo-sm.png" class="mx-auto d-block" height="100"
+                        alt="{{ config('app.name', 'Project0') }}">
+                    <!-- Logo area-->
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <img src="/storage/{{ $office->avatar }}" class="mx-auto d-block" width="93" alt="logo">
+                        </div>
+                        <div class="col-9 border-bottom p-2 px-3">
+                            <h4>{{ $office->name }}</h4>
+                            <a href="tel:{{ $office->settings['phone'] }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-phone-alt"></i>
+                                {{ __('app.Call') }}
+                            </a>
 
-        <form class="form-signin was-validated text-center" action="{{ route('client.composse') }}" method="POST">
-
-            @csrf
-            <input type="hidden" name="service_id" value="{{ $order['service_id'] }}">
-            <input type="hidden" name="from_lat" value="{{ $order['from_lat'] }}">
-            <input type="hidden" name="from_lng" value="{{ $order['from_lng'] }}">
-
-            <input type="hidden" name="to_lat" id="to_lat">
-            <input type="hidden" name="to_lng" id="to_lng">
-
-            <input type="hidden" name="session" value="{{ $order['session'] }}">
-            <input type="hidden" name="hash" value="{{ $order['hash'] }}">
-
-            <input type="hidden" name="email" value="{{ $order['email'] }}">
-            <input type="hidden" name="phone" value="{{ $order['phone'] }}">
-            <input type="hidden" name="from_address" value="{{ $order['from_address'] }}">
-
-            <div class="form-group">
-
-                <input type="text" class="form-control" value="{{ $order['name'] }}" name="name" required readonly>
-
-            </div>
-            <div class="form-group">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-map-marker-alt text-danger" id="confirmDist"></i>
-                        </span>
+                        </div>
                     </div>
+                    <form action="{{ route('client.composse') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="service_id" value="{{ $order['service_id'] }}">
+                        <input type="hidden" name="from_lat" value="{{ $order['from_lat'] }}">
+                        <input type="hidden" name="from_lng" value="{{ $order['from_lng'] }}">
 
-                    <textarea type="text" class="form-control"
-                        style="border: solid 1px #ced4da;background-color:#f5f5f5;obacity:1"
-                        placeholder="Enter your Distination" id="to_address" name="to_address" required></textarea>
-                    <div id="dist"></div>
+                        <input type="hidden" name="to_lat" id="to_lat">
+                        <input type="hidden" name="to_lng" id="to_lng">
+
+                        <input type="hidden" name="session" value="{{ $order['session'] }}">
+                        <input type="hidden" name="hash" value="{{ $order['hash'] }}">
+
+                        <input type="hidden" name="email" value="{{ $order['email'] }}">
+                        <input type="hidden" name="phone" value="{{ $order['phone'] }}">
+                        <input type="hidden" name="from_address" value="{{ $order['from_address'] }}">
+
+                        <div class="my-3">
+                            <label for="exampleInputEmail1"
+                                class="form-label text-muted">{{ __('app.Enter your name') }}</label>
+                            <input type="text" class="form-control" value="{{ $order['name'] }}"
+                                placeholder="{{ __('app.Enter your name') }}" name="name" required readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="from_address" class="form-label text-muted">Destination</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Enter your Distination" id="to_address"
+                                    name="to_address" required>
+                                <button class="btn btn-outline-secondary" type="button" id="confirmDist">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">
+                                {{ __('app.Address hint1') }}
+                                <i class="fas fa-map-marker-alt text-primary"></i> {{ __('app.Address hint2') }}
+                            </div>
+                        </div>
+                        <div id="dist"></div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">{{ __('app.Note') }}</label>
+                            <input type="text" class="form-control" placeholder="{{ __('app.Note') }}" name="note">
+                        </div>
+                        <div class="row">
+                            <div class="col-12 d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">{{ __('app.SUBMIT') }}</button>
+                            </div>
+                        </div>
+
+
+                    </form>
                 </div>
             </div>
-            <div class="form-group">
-
-                <input type="text" class="form-control" placeholder="{{ __('app.Note') }}" name="note">
-                <div class="invalid-feedback">{{ __('app.Please fill out this field.') }}</div>
-            </div>
-
-
-
-
-
-    </div>
-
-
-
-    <button type="submit" class="btn btn-lg btn-warning btn-block">{{ __('app.SUBMIT') }}</button>
-
-
-
-    </form>
-    </div>
+        </div>
+    </main>
 @endsection
 
 @section('js')
@@ -119,22 +133,6 @@
 @section('css')
 
     <style>
-        html,
-        body {
-            height: 100%;
-        }
-
-
-
-        body {
-
-            align-items: center;
-            padding-top: 16px;
-            padding-bottom: 40px;
-            background-color: #f5f5f5;
-        }
-
-
         #dist {
             width: 100%;
             height: 300px;
@@ -142,41 +140,14 @@
 
         }
 
+        /* Custom page CSS
+                              -------------------------------------------------- */
+        /* Not required for template or sticky footer method. */
 
-
-        .form-signin {
-            width: 100%;
-
-            padding: 15px;
-            margin: auto;
-        }
-
-        .form-signin .checkbox {
-            font-weight: 400;
-        }
-
-        .form-signin .form-control {
-            position: relative;
-            box-sizing: border-box;
-            height: auto;
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        .form-signin .form-control:focus {
-            z-index: 2;
-        }
-
-        .form-signin input[type="email"] {
-            margin-bottom: -1px;
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        .form-signin input[type="password"] {
-            margin-bottom: 10px;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
+        .container {
+            width: auto;
+            max-width: 680px;
+            padding: 0 15px;
         }
 
         .bd-placeholder-img {
@@ -184,7 +155,6 @@
             text-anchor: middle;
             -webkit-user-select: none;
             -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
@@ -194,15 +164,30 @@
             }
         }
 
-        .badge-secondary {
-            color: #252525;
-            background-color: #d3d3d3;
+        .form-check-input:checked {
+            background-color: #fbb921;
+            border-color: #fbb921;
         }
 
-        .form-signin .form-control {
-            border: none;
-            border-bottom: solid #d3d3d3;
-            background-color: #f5f5f5;
+        .form-check .form-check-input {
+            float: left;
+            margin-left: 0em;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #fbb921;
+            border-color: #fbb921;
+        }
+
+        .vl {
+            border-left: 1px solid #ddd;
+            height: 50%;
+            margin: 0 50%;
+        }
+
+        .checked {
+            color: orange;
         }
 
     </style>
