@@ -85,3 +85,7 @@ Route::get('/app/{hash}/get/driver', 'API\DriverController@getDriverFromHash');
 Route::get('/app/{hash}/toggle', 'API\DriverController@toggle');
 
 Route::get('/app/{hash}/reset', 'API\DriverController@reset');
+
+// API OFFICE APP:
+
+Route::get('/oapp/init/{officeEmail}', 'API\OrderController@initOrder');

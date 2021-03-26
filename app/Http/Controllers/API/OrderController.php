@@ -27,6 +27,28 @@ class OrderController extends Controller
         return [];
     }
 
+    public function initOrder($officeEmail)
+    {
+
+        $office = User::where('email', $officeEmail)->firstOrFail();
+
+        if (count($office->services) == 0) {
+            return response('NO_SERVICE', 400);
+        }
+
+
+        if ($office->level != 2) return response('BAD_REQUEST', 400);;
+        $agent = $office->parent;
+
+
+        $mapCenter = [$office->settings['coordinate_lat'], $office->settings['coordinate_lng']];
+        return [
+            'office' => $office,
+            'agent' => $agent,
+            'mapCenter' => $mapCenter
+        ];
+    }
+
     public function create(Request $request)
     {
         $user = User::find($request->uid);

@@ -8,6 +8,12 @@ use App\Traits\Multitenantable;
 class Service extends Model
 {
     use Multitenantable;
+    protected $appends = ['vehicle'];
+
+    public function getVehicleAttribute()
+    {
+        return Vehicle::find($this->vehicle_id);
+    }
 
     public function vehicle()
     {
