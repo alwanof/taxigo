@@ -150,15 +150,18 @@
                 }]
             });
 
-            console.log(lp.getMarkerPosition());
+
             google.maps.event.addListener(lp.map, 'idle', function(event) {
                 // Get current location and show it in HTML
                 var loc = lp.getMarkerPosition();
 
-                //lat = loc.lat;
-                //lng = loc.lng;
+                if (Math.abs(loc.lat - 34.4346) < 0.001 && Math.abs(loc.lng - 35.8362) < 0.001) {
+                    loc = {
+                        lat: defaultLat,
+                        lng: defaultLng
+                    }
+                }
 
-                //onIdlePositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
                 $.getJSON(
                     'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + loc.lat + ',' + loc
                     .lng + '&key=AIzaSyANYVpeOpsNN4DqdKR4AKAyd03IQ3_9PvU',
