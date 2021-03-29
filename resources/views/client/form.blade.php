@@ -133,8 +133,8 @@
 
             var lp = new locationPicker('source', {
                 setCurrentPosition: true, // You can omit this, defaults to true
-                lat: defaultLat,
-                lng: defaultLng,
+                //lat: defaultLat,
+                //lng: defaultLng,
 
             }, {
                 zoom: 15, // You can set any google map options here, zoom defaults to 15,
@@ -150,6 +150,7 @@
                 }]
             });
 
+            console.log(lp.getMarkerPosition());
             google.maps.event.addListener(lp.map, 'idle', function(event) {
                 // Get current location and show it in HTML
                 var loc = lp.getMarkerPosition();
@@ -159,10 +160,8 @@
 
                 //onIdlePositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
                 $.getJSON(
-                    'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + loc.lat + ',' +
-                    loc
-                    .lng +
-                    '&key=AIzaSyANYVpeOpsNN4DqdKR4AKAyd03IQ3_9PvU',
+                    'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + loc.lat + ',' + loc
+                    .lng + '&key=AIzaSyANYVpeOpsNN4DqdKR4AKAyd03IQ3_9PvU',
                     function(result) {
 
                         //console.log({!! json_encode($mapCenter) !!});
