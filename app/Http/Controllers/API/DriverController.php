@@ -49,7 +49,6 @@ class DriverController extends Controller
     public function tracking($hash, $lat, $lng)
     {
 
-
         $driver = Driver::where('hash', $hash)->firstOrFail();
         $office = User::find($driver->user_id);
         $order = Order::where('driver_id', $driver->id)
@@ -69,6 +68,12 @@ class DriverController extends Controller
             //if ($order->service->plan != 'OFFER') {}
 
             $order->save();
+            Stream::create([
+                'pid' => $order->id,
+                'model' => 'Order',
+                'action' => 'U',
+                'meta' => ['office' => $order->user_id, 'agent' => $order->parent, 'action' => 'update']
+            ]);
         }
 
 
@@ -200,7 +205,9 @@ class DriverController extends Controller
         $vehicle_id = Service::findOrFail($service)->vehicle_id;
         $workRange = $office->settings['work_rang'];
         //$driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=?  HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $workRange]);
-        $driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=? HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $vehicle_id, $workRange]);
+        //$driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=? HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $vehicle_id, $workRange]);
+        $driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=?  ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $vehicle_id]);
+
         if (count($driver) == 0) {
             return [];
         }

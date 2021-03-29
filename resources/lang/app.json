@@ -24,7 +24,9 @@
         "New":"New",
         "Note":"Note",
         "TOTAL AMOUNNT":"TOTAL AMOUNNT",
-        "CALL":"CALL"
+        "CALL":"CALL",
+        "Trip Started":"Trip Started",
+        "Trip Failed": "Trip Failed"
 
     },
     "ar": {
@@ -52,7 +54,9 @@
         "New":"جديد",
         "Note":"ملاحظات",
         "TOTAL AMOUNNT":"السعر الاجمالي",
-        "CALL":"اتصال"
+        "CALL":"اتصال",
+        "Trip Started":"بدأت الرحلة",
+        "Trip Failed":"فشل الرحلة"
     }
 
 

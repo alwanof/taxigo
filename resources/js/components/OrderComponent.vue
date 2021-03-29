@@ -36,16 +36,30 @@
               </div>
             </div>
             <!-- PRICE -->
-            <div class="row border bg-dark text-muted rounded p-3 mt-3" v-show="feed.total">
-              <div class="col-2">
+            <div class="row border bg-dark text-muted rounded p-3 mt-3">
+                <div class="col-2">
                 <i class="fas fa-coins fa-2x"></i>
               </div>
-              <div class="col-7">
-                <h4>{{tran('TOTAL AMOUNNT')}}</h4>
+              <div class="col-4">
+                <div v-show="feed.total">
+                  <span class="h3 p-0 m-0">{{feed.total}} </span><span class="h6 p-0 m-0">{{office.settings.currency}}</span></div>
+                <div v-show="feed.est_price">
+                  <h6>EST. {{feed.est_price}}<small>{{office.settings.currency}}</small></h6>
+                </div>
+
               </div>
-              <div class="col-3">
-                <h4>{{feed.total}} {{office.settings.currency}}</h4>
+              <div class="col-2">
+                <i class="far fa-clock fa-2x"></i>
               </div>
+              <div class="col-4">
+                <div v-show="feed.duration">
+                  <span class="h3 p-0 m-0">{{Math.round(feed.duration/60)}}</span><span class="h6 p-0 m-0">min</span></div>
+                <div v-show="feed.est_time">
+                  <h6>EST. {{Math.round(feed.est_time/60)}}<small>min</small></h6>
+                </div>
+              </div>
+
+
             </div>
             <!-- Approve / Reject -->
             <div class="row border text-center rounded p-2" v-if="feed.status==3">
@@ -56,7 +70,7 @@
 
             </div>
              <!-- Path-->
-            <div class="row border rounded p-2 mt-3" v-if="feed.status==21">
+            <div class="row border rounded p-2 mt-3" v-if="feed.status==21 || feed.status==22">
               <div class="col-2 py-3">
                   <div class="text-center">
                     <i class="far fa-user-circle"></i>
@@ -85,7 +99,7 @@
                       <div class="col-4">
                         <a :href="'tel:'+feed.driver.phone" class="btn btn-sm btn-success">
                           <i class="fas fa-phone-alt"></i>
-                          {{tran('CALL')}}
+                          {{trans('CALL')}}
                         </a>
                       </div>
                     </div>
@@ -108,7 +122,7 @@
               </div>
             </div>
             <!-- MAP -->
-            <div class="row border rounded p-2 mt-3" v-if="feed.status==21">
+            <div class="row border rounded p-2 mt-3" v-if="feed.status==21 || feed.status==22">
               <div class="col">
                 <tracking-component :parse="parse" :driver="feed.driver"></tracking-component>
               </div>

@@ -47,6 +47,14 @@
                                 @endif
                             @endforeach
                         </div>
+                        <!-- alert -->
+                        <div class="alert alert-warning mt-1 show fade" id="alert" role="alert">
+                            Estimated time to arival: <i class="far fa-clock"></i> <strong id="estTime"></strong>
+                            <span id="loading" class="spinner-border text-warning spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </span>
+
+                        </div>
                         <div class="my-3">
                             <label for="exampleInputEmail1"
                                 class="form-label text-muted">{{ __('app.Enter your name') }}</label>
@@ -110,14 +118,18 @@
         $(document).ready(function() {
 
 
+
             $("#confirmSource").click(function() {
                 $("#source").slideToggle();
             });
 
             var defaultLat = {!! json_encode($mapCenter[0]) !!};
             var defaultLng = {!! json_encode($mapCenter[1]) !!};
+            var office = {!! json_encode($office) !!};
             //var defaultLat = 41.021011;
             //var defaultLng = 28.931812;
+
+
 
             var lp = new locationPicker('source', {
                 setCurrentPosition: true, // You can omit this, defaults to true
@@ -160,6 +172,25 @@
                         document.getElementById('from_lng').value = loc.lng;
                     });
             });
+            // service esteemed
+            $("#loading").hide();
+            $("input[name='service_id']").click(function() {
+                $("#alert").show();
+                $("#loading").show();
+                var locc = lp.getMarkerPosition();
+
+                $.get("/api/nearby/" + office.id + "/" + locc.lat + "/" + locc.lng + "/" + $(this)
+                    .val(),
+                    function(data, status) {
+                        $("#estTime").text('UNKnown');
+                        if (data.time > 0) {
+                            $("#estTime").text(Math.round(data.time / 60) + 'min');
+                        }
+                        $("#loading").hide();
+                    });
+            });
+
+            // end
 
         });
 
@@ -209,6 +240,10 @@
         #source {
             width: 100%;
             height: 300px;
+            display: none;
+        }
+
+        #alert {
             display: none;
         }
 
