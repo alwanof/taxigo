@@ -137,8 +137,9 @@ class Driver extends Resource
                     'L' => __('Leash'),
                 ];
             })->hideFromIndex()->default('NO'),
-            Boolean::make(__('Protection '), 'protection ')->hideFromIndex()->withMeta(["value" => 0]),
-            Boolean::make(__('child_seat'), 'child_seat  ')->hideFromIndex()->withMeta(["value" => 0]),
+            Boolean::make(__('Wifi '), 'wifi ')->hideFromIndex(),
+            Boolean::make(__('child_seat'), 'child_seat  ')->hideFromIndex(),
+            Boolean::make(__('CreditCard '), 'creditcard ')->hideFromIndex(),
             Text::make(__('Busy'), function () {
                 return $this->driverStatus();
             })
