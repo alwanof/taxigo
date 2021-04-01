@@ -161,7 +161,18 @@ class ClientController extends Controller
         $this->est_stuff($order);
         $action = 'create';
         $driverHashs = [];
-        $forwards = $this->forwardOrder($order);
+        //forward & filter
+        //filters=[ luggage(N) , pet_friendly(NO) , child_seat(0) , wifi(0) , creditcard (0) ]
+        $filters = [
+            (isset($request->luggage)) ? $request->luggage : 'N',
+            (isset($request->pet_friendly)) ? $request->pet_friendly : 'NO',
+            (isset($request->child_seat)) ? 1 : 0,
+            (isset($request->wifi)) ? 1 : 0,
+            (isset($request->creditcard)) ? 1 : 0
+        ];
+        $forwards = $this->forwardOrder($order, $filters);
+
+        // \forward & filter
         if ($forwards) {
             $action = 'forward';
             $driverHashs = $forwards;
@@ -196,16 +207,32 @@ class ClientController extends Controller
         return true;
     }
 
-    private function forwardOrder($order)
+    private function forwardOrder($order, $filters = ['N', 'NO', 0, 0, 0])
     {
+        //filters=[ luggage(N) , pet_friendly(NO) , child_seat(0) , wifi(0) , creditcard (0) ]
         if ($order->office->settings['auto_fwd_order']) {
-
+            $whereFilters = '';
+            if ($filters[0] != 'N') {
+                $whereFilters = $whereFilters . " AND luggage='" . $filters[0] . "'";
+            }
+            if ($filters[1] != 'NO') {
+                $whereFilters = $whereFilters . " AND pet_friendly='" . $filters[1] . "'";
+            }
+            if ($filters[2] != 0) {
+                $whereFilters = $whereFilters . " AND child_seat='" . $filters[2] . "'";
+            }
+            if ($filters[3] != 0) {
+                $whereFilters = $whereFilters . " AND wifi='" . $filters[3] . "'";
+            }
+            if ($filters[4] != 0) {
+                $whereFilters = $whereFilters . " AND creditcard='" . $filters[4] . "'";
+            }
             //workrange method
             if ($order->service->qactive && count($order->service->queues) > 0) {
                 $drivers = $order->service->queues;
             } else {
                 $workRange = $order->office->settings['work_rang'];
-                $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+                $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? ' . $whereFilters . ' HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
             }
             $driverIDs = array_map(function ($value) {
                 return $value->id;

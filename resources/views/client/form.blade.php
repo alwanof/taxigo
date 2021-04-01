@@ -89,12 +89,118 @@
                             </div>
                         </div>
                         <div id="source"></div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Apply Filters</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row p-0 m-0 border rounded text-muted">
+                                            <div class="col-11  m-0">
+                                                <div class="form-check m-0 p-2">
+                                                    <input class="form-check-input mx-2 p-2" type="checkbox"
+                                                        name="creditcard" value="1">
+                                                    <label class="form-check-label">
+                                                        Credit Card Supported
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-1 m-0 p-2">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                        </div>
+                                        <div class="row p-0 m-0 mt-2 border rounded text-muted">
+                                            <div class="col-11  m-0">
+                                                <div class="form-check m-0 p-2">
+                                                    <input class="form-check-input mx-2 p-2" type="checkbox" name="wifi"
+                                                        value="1">
+                                                    <label class="form-check-label">
+                                                        Wifi Available
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-1 m-0 p-2">
+                                                <i class="fas fa-wifi"></i>
+                                            </div>
+                                        </div>
+                                        <div class="row p-0 m-0 mt-2 border rounded text-muted">
+                                            <div class="col-11  m-0">
+                                                <div class="form-check m-0 p-2">
+                                                    <input class="form-check-input mx-2 p-2" type="checkbox"
+                                                        name="child_seat" value="1">
+                                                    <label class="form-check-label">
+                                                        Child Seat Available
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-1 m-0 p-2">
+                                                <i class="fas fa-child"></i>
+                                            </div>
+                                        </div>
+                                        <div class="row p-0 m-0 mt-2 border rounded text-muted">
+                                            <div class="col-11  m-0">
+                                                <div class="form-check m-0 p-2">
+                                                    <input class="form-check-input mx-2 p-2" type="checkbox"
+                                                        name="pet_friendly" value="C">
+                                                    <label class="form-check-label">
+                                                        Pet Friendly
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-1 m-0 p-2">
+                                                <i class="fas fa-dog"></i>
+                                            </div>
+                                        </div>
+                                        <div class="row p-0 m-0 mt-2 border rounded text-muted">
+                                            <div class="col-10  m-0">
+                                                <div class="form-check m-0 p-2">
+                                                    <input class="form-check-input mx-2 p-2" type="radio" name="luggage"
+                                                        value="N">
+                                                    <label class="form-check-label">
+                                                        Normal Size
+                                                    </label>
+
+                                                </div>
+                                                <div class="form-check m-0 p-2">
+                                                    <input class="form-check-input mx-2 p-2" type="radio" name="luggage"
+                                                        value="B">
+                                                    <label class="form-check-label">
+                                                        Big Luggage
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-2 m-0 p-2">
+                                                <i class="fas fa-luggage-cart fa-2x"></i>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Apply
+                                            Filters</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Modal -->
                         <div class="row mt-3">
                             <div class="col-10 d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">{{ __('app.Continue') }}</button>
                             </div>
                             <div class="col-2">
-                                <button type="submit" class="btn btn-light">
+                                <button type="submit" class="btn btn-light" data-bs-toggle="modal"
+                                    data-bs-target="#filterModal">
                                     <i class="fas fa-sliders-h"></i>
                                 </button>
 

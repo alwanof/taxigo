@@ -133,8 +133,7 @@ class Driver extends Resource
             Select::make(__('Pet_friendly '), 'pet_friendly ')->options(function () {
                 return [
                     'NO' => __('None'),
-                    'C' => __('Cage'),
-                    'L' => __('Leash'),
+                    'C' => __('Cage')
                 ];
             })->hideFromIndex()->default('NO'),
             Boolean::make(__('Wifi '), 'wifi ')->hideFromIndex(),
