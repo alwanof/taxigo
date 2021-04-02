@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-100">
+<html dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    class="h-100">
 
 <head>
     <meta charset="utf-8">
@@ -21,8 +22,15 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    @if (app()->getLocale() == 'ar')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.rtl.min.css"
+            integrity="sha384-trxYGD5BY4TyBTvU5H23FalSCYwpLA0vWEvXXGm5eytyztxb+97WzzY+IWDOSbav" crossorigin="anonymous">
+
+
+    @else
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    @endif
     @yield('css')
 
 </head>
@@ -39,12 +47,12 @@
 
                 </div>
                 <div class="col-4">
-                    <select class="form-select" aria-label="Default select example">
-                    <option selected>
+                    <select class="form-select" id="lang" aria-label="Default select example">
+                    <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
                         🇺🇸
                         English
                     </option>
-                    <option value="1">
+                    <option value="ar" {{ app()->getLocale() == 'ar' ? 'selected' : '' }}>
                         🇸🇦
                         عربي
                     </option>
@@ -56,7 +64,17 @@
         <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script>
+         $(document).ready(function() {
+             $('#lang').change(function() {
+            // set the window's location property to the value of the option the user has selected
+                window.location = "/set/lang/"+$(this).val();
+            });
+         });
+
+    </script>
     @yield('js')
+
 </body>
 
 </html>

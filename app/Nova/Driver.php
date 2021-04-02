@@ -130,12 +130,7 @@ class Driver extends Resource
                     'B' => __('Big'),
                 ];
             })->hideFromIndex()->default('N'),
-            Select::make(__('Pet_friendly '), 'pet_friendly ')->options(function () {
-                return [
-                    'NO' => __('None'),
-                    'C' => __('Cage')
-                ];
-            })->hideFromIndex()->default('NO'),
+            Boolean::make(__('Pet_friendly '), 'pet_friendly ')->hideFromIndex(),
             Boolean::make(__('Wifi '), 'wifi ')->hideFromIndex(),
             Boolean::make(__('child_seat'), 'child_seat  ')->hideFromIndex(),
             Boolean::make(__('CreditCard '), 'creditcard ')->hideFromIndex(),

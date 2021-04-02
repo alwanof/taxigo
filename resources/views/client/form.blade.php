@@ -49,9 +49,10 @@
                         </div>
                         <!-- alert -->
                         <div class="alert alert-warning mt-1 show fade" id="alert" role="alert">
-                            Estimated time to arival: <i class="far fa-clock"></i> <strong id="estTime"></strong>
+                            {{ __('app.Estimated time to arival:') }} <i class="far fa-clock"></i> <strong
+                                id="estTime"></strong>
                             <span id="loading" class="spinner-border text-warning spinner-border-sm" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                                <span class="visually-hidden">...</span>
                             </span>
 
                         </div>
@@ -71,10 +72,11 @@
                             <label class="form-label text-muted">{{ __('app.Enter your email') }}</label>
                             <input type="email" class="form-control" value="{{ $meta['email'] }}"
                                 placeholder="{{ __('app.Enter your email') }}" name="email" required>
-                            <div class="form-text">We'll never share your email with anyone else.</div>
+                            <div class="form-text">{{ __('app.We will never share your email with anyone else.') }}</div>
                         </div>
                         <div class="mb-3">
-                            <label for="from_address" class="form-label text-muted">Current Location</label>
+                            <label for="from_address"
+                                class="form-label text-muted">{{ __('app.Current Location') }}</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" value="{{ $meta['address'] }}"
                                     placeholder="Enter your address" id="from_address" name="from_address" required
@@ -95,7 +97,7 @@
                             <div class="modal-dialog modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Apply Filters</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">{{ __('app.Apply Filters') }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
@@ -106,7 +108,7 @@
                                                     <input class="form-check-input mx-2 p-2" type="checkbox"
                                                         name="creditcard" value="1">
                                                     <label class="form-check-label">
-                                                        Credit Card Supported
+                                                        {{ __('app.Credit Card Supported') }}
                                                     </label>
 
                                                 </div>
@@ -121,7 +123,7 @@
                                                     <input class="form-check-input mx-2 p-2" type="checkbox" name="wifi"
                                                         value="1">
                                                     <label class="form-check-label">
-                                                        Wifi Available
+                                                        {{ __('app.Wifi Available') }}
                                                     </label>
 
                                                 </div>
@@ -136,7 +138,7 @@
                                                     <input class="form-check-input mx-2 p-2" type="checkbox"
                                                         name="child_seat" value="1">
                                                     <label class="form-check-label">
-                                                        Child Seat Available
+                                                        {{ __('app.Child Seat Available') }}
                                                     </label>
 
                                                 </div>
@@ -149,9 +151,9 @@
                                             <div class="col-11  m-0">
                                                 <div class="form-check m-0 p-2">
                                                     <input class="form-check-input mx-2 p-2" type="checkbox"
-                                                        name="pet_friendly" value="C">
+                                                        name="pet_friendly" value="1">
                                                     <label class="form-check-label">
-                                                        Pet Friendly
+                                                        {{ __('app.Pet Friendly') }}
                                                     </label>
 
                                                 </div>
@@ -166,7 +168,7 @@
                                                     <input class="form-check-input mx-2 p-2" type="radio" name="luggage"
                                                         value="N">
                                                     <label class="form-check-label">
-                                                        Normal Size
+                                                        {{ __('app.Normal Size') }}
                                                     </label>
 
                                                 </div>
@@ -174,7 +176,7 @@
                                                     <input class="form-check-input mx-2 p-2" type="radio" name="luggage"
                                                         value="B">
                                                     <label class="form-check-label">
-                                                        Big Luggage
+                                                        {{ __('app.Big Luggage') }}
                                                     </label>
 
                                                 </div>
@@ -187,8 +189,9 @@
                                     </div>
                                     <div class="modal-footer">
 
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Apply
-                                            Filters</button>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                            {{ __('app.Apply Filters') }}
+                                        </button>
                                     </div>
                                 </div>
                             </div>

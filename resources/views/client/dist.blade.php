@@ -48,10 +48,11 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="from_address" class="form-label text-muted">Destination</label>
+                            <label for="from_address" class="form-label text-muted">{{ __('app.Destination') }}</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Enter your Distination" id="to_address"
-                                    name="to_address" required>
+                                <input type="text" class="form-control"
+                                    placeholder="{{ __('app.Enter your Distination') }}" id="to_address" name="to_address"
+                                    required>
                                 <button class="btn btn-outline-secondary" type="button" id="confirmDist">
                                     <i class="fas fa-map-marker-alt"></i>
                                 </button>
@@ -141,7 +142,7 @@
         }
 
         /* Custom page CSS
-                              -------------------------------------------------- */
+                                  -------------------------------------------------- */
         /* Not required for template or sticky footer method. */
 
         .container {

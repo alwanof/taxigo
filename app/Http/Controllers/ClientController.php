@@ -165,7 +165,7 @@ class ClientController extends Controller
         //filters=[ luggage(N) , pet_friendly(NO) , child_seat(0) , wifi(0) , creditcard (0) ]
         $filters = [
             (isset($request->luggage)) ? $request->luggage : 'N',
-            (isset($request->pet_friendly)) ? $request->pet_friendly : 'NO',
+            (isset($request->pet_friendly)) ? 1 : 0,
             (isset($request->child_seat)) ? 1 : 0,
             (isset($request->wifi)) ? 1 : 0,
             (isset($request->creditcard)) ? 1 : 0
