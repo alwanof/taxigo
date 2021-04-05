@@ -28,8 +28,9 @@ use Parziphal\Parse\Auth\UserModel;
 
 Route::get('/', function () {
 
-
-    return view('welcome');
+    //$order = Order::find(186);
+    //return $order->service->queues;
+    //return view('welcome');
 });
 // TEST
 

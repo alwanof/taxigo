@@ -142,9 +142,12 @@ class TestoController extends Controller
     private function forwardOrder(Order $order)
     {
         if ($order->office->settings['auto_fwd_order']) {
+            if ($order->service->plan == 'OFFER') {
+                return false;
+            }
 
             //workrange method
-            if ($order->service->qactive && count($order->service->queues) > 0) {
+            if ($order->service->qactive && $order->service->queues) {
                 $drivers = $order->service->queues;
             } else {
                 $workRange = $order->office->settings['work_rang'];

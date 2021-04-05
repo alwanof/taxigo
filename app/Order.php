@@ -70,6 +70,7 @@ class Order extends Model
 
     public function getDriversAttribute()
     {
+
         $vehicle_id = $this->service->vehicle_id;
         $block = explode('--', $this->block);
         $drivers = Driver::where('user_id', $this->user_id)
@@ -92,6 +93,7 @@ class Order extends Model
 
     public function office()
     {
+
         return $this->belongsTo(User::class, 'user_id');
     }
     public function actor()
@@ -100,7 +102,7 @@ class Order extends Model
     }
     public function service()
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class)->withoutGlobalScope('ref');
     }
 
     public function getCreatedAtAttribute($date)
