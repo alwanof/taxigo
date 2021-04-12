@@ -80,9 +80,12 @@ class ClientController extends Controller
         return 1;
     }
 
-    public function index($office_email)
+    public function index($office_email = null)
     {
 
+        if (!$office_email) {
+            abort(500);
+        }
         $meta['name'] = (isset($_GET['name'])) ? $_GET['name'] : null;
         $meta['phone'] = (isset($_GET['phone'])) ? $_GET['phone'] : null;
         $meta['email'] = (isset($_GET['email'])) ? $_GET['email'] : null;
