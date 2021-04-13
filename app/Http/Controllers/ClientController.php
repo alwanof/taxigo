@@ -110,7 +110,7 @@ class ClientController extends Controller
                 return $value['settings']['country'] == 'tr';
             });
             $rand = rand(0, count($filteredArray) - 1);
-            $office_email = $filteredArray[$rand];
+            $office_email = $filteredArray[$rand]['email'];
         }
         $meta['name'] = (isset($_GET['name'])) ? $_GET['name'] : null;
         $meta['phone'] = (isset($_GET['phone'])) ? $_GET['phone'] : null;
