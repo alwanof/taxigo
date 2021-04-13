@@ -102,12 +102,15 @@ class ClientController extends Controller
         if (!$office_email) {
             $ip = $this->get_ip($request);
             $response = Http::get('http://ip-api.com/php/' . $ip);
-            $users = User::all();
+            $users = User::where([
+                'level' => 2,
+                'active' => 1
+            ])->get();
             $filteredArray = Arr::where($users->toArray(), function ($value, $key) {
                 return $value['settings']['country'] == 'tr';
             });
             $rand = rand(0, count($filteredArray) - 1);
-            return $filteredArray[$rand];
+            $office_email = $filteredArray[$rand];
         }
         $meta['name'] = (isset($_GET['name'])) ? $_GET['name'] : null;
         $meta['phone'] = (isset($_GET['phone'])) ? $_GET['phone'] : null;
