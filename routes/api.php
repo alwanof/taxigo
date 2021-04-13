@@ -60,7 +60,7 @@ Route::get('/nearby/{office}/{lat}/{lng}/{service}', 'API\DriverController@nearb
 // API Mobile APP:
 
 Route::get('/app/get/order/{hash}', 'API\OrderController@getDriverOrder');
-
+Route::post('/app/orders/neworder', 'API\OrderController@newOrder'); //new 04
 
 Route::get('/app/{hash}/approve/{order_id}', 'API\OrderController@driverApproveOrder'); //updated
 

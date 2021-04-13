@@ -10,6 +10,7 @@ use App\Queue;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -47,6 +48,71 @@ class OrderController extends Controller
             'agent' => $agent,
             'mapCenter' => $mapCenter
         ];
+    }
+
+    public function newOrder(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'from_address' => 'required',
+            'from_lat' => 'required',
+            'from_lng' => 'required',
+            'service_id' => 'required',
+            'office_id' => 'required'
+        ]);
+
+        $office = User::findOrFail($request->office_id);
+        $agent = User::findOrFail($office->user_id);
+
+        // Create a new Order
+
+        $order = Order::create(
+            [
+                'session' => Str::random(28),
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'from_address' => $request->from_address,
+                'from_lat' => $request->from_lat,
+                'from_lng' => $request->from_lng,
+                'to_address' => ($request->to_address) ? $request->to_address : null,
+                'to_lat' => ($request->to_lat || ($request->to_lat != $request->from_lat)) ? $request->to_lat : 0,
+                'to_lng' => ($request->to_lng || ($request->to_lng != $request->from_lng)) ? $request->to_lng : 0,
+                'service_id' => $request->service_id,
+                'user_id' => $office->id,
+                'parent' => $agent->id,
+                'status' => 0,
+                'note' => $request->note
+            ]
+        );
+        $this->est_stuff($order);
+        $action = 'create';
+        $driverHashs = [];
+        //forward & filter
+        //filters=[ luggage(N) , pet_friendly(NO) , child_seat(0) , wifi(0) , creditcard (0) ]
+        $filters = [
+            (isset($request->luggage)) ? $request->luggage : 'N',
+            (isset($request->pet_friendly)) ? 1 : 0,
+            (isset($request->child_seat)) ? 1 : 0,
+            (isset($request->wifi)) ? 1 : 0,
+            (isset($request->creditcard)) ? 1 : 0
+        ];
+        $forwards = $this->forwardOrder($order, $filters);
+
+        // \forward & filter
+        if ($forwards) {
+            $action = 'forward';
+            $driverHashs = $forwards;
+        }
+        Stream::create([
+            'pid' => $order->id,
+            'model' => 'Order',
+            'action' => 'C',
+            'meta' => ['office' => $order->office->id, 'drivers' => $driverHashs, 'action' => $action]
+        ]);
+        return $order;
     }
 
     public function create(Request $request)
