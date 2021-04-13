@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 
 class ClientController extends Controller
 {
@@ -80,11 +81,33 @@ class ClientController extends Controller
         return 1;
     }
 
-    public function index($office_email = null)
+    private function get_ip(Request $request)
+    {
+        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
+            if (array_key_exists($key, $_SERVER) === true) {
+                foreach (explode(',', $_SERVER[$key]) as $ip) {
+                    $ip = trim($ip); // just to be safe
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                        return $ip;
+                    }
+                }
+            }
+        }
+        return request()->ip(); // it will return server ip when no client ip found
+    }
+
+    public function index(Request $request, $office_email = null)
     {
 
         if (!$office_email) {
-            abort(500);
+            $ip = $this->get_ip($request);
+            $response = Http::get('http://ip-api.com/php/' . $ip);
+            $users = User::all();
+            $filteredArray = Arr::where($users->toArray(), function ($value, $key) {
+                return $value['settings']['country'] == 'tr';
+            });
+            $rand = rand(0, count($filteredArray) - 1);
+            return $filteredArray[$rand];
         }
         $meta['name'] = (isset($_GET['name'])) ? $_GET['name'] : null;
         $meta['phone'] = (isset($_GET['phone'])) ? $_GET['phone'] : null;
