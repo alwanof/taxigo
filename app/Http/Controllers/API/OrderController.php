@@ -9,6 +9,7 @@ use App\Parse\Stream;
 use App\Queue;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -52,6 +53,7 @@ class OrderController extends Controller
 
     public function newOrder(Request $request)
     {
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required',
@@ -63,8 +65,9 @@ class OrderController extends Controller
             'office_id' => 'required'
         ]);
 
+
         $office = User::findOrFail($request->office_id);
-        $agent = User::findOrFail($office->user_id);
+        $agent = User::findOrFail($office->ref);
 
         // Create a new Order
 
@@ -87,6 +90,7 @@ class OrderController extends Controller
                 'note' => $request->note
             ]
         );
+
         $this->est_stuff($order);
         $action = 'create';
         $driverHashs = [];
@@ -113,6 +117,79 @@ class OrderController extends Controller
             'meta' => ['office' => $order->office->id, 'drivers' => $driverHashs, 'action' => $action]
         ]);
         return $order;
+    }
+    private function est_stuff($order)
+    {
+        if ($order->from_lat != 0 && $order->from_lng != 0   && $order->to_lat != 0  && $order->to_lng != 0) {
+            $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+                'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
+                'language' => 'en-US',
+                'mode' => 'DRIVING',
+                'origins' => $order->from_lat . ',' . $order->from_lng,
+                'destinations' => $order->to_lat . ',' . $order->to_lng,
+            ]);
+
+            if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
+                $order->est_distance = $response['rows'][0]['elements'][0]['distance']['value'];
+                $order->est_time = $response['rows'][0]['elements'][0]['duration']['value'];
+                $order->est_price = $order->orderTotal($order->est_distance, $order->est_time);
+                $order->save();
+            }
+        }
+        return true;
+    }
+    private function forwardOrder($order, $filters = ['N', 'NO', 0, 0, 0])
+    {
+        //filters=[ luggage(N) , pet_friendly(NO) , child_seat(0) , wifi(0) , creditcard (0) ]
+        if ($order->office->settings['auto_fwd_order']) {
+            $whereFilters = '';
+            if ($filters[0] != 'N') {
+                $whereFilters = $whereFilters . " AND luggage='" . $filters[0] . "'";
+            }
+            if ($filters[1] != 'NO') {
+                $whereFilters = $whereFilters . " AND pet_friendly='" . $filters[1] . "'";
+            }
+            if ($filters[2] != 0) {
+                $whereFilters = $whereFilters . " AND child_seat='" . $filters[2] . "'";
+            }
+            if ($filters[3] != 0) {
+                $whereFilters = $whereFilters . " AND wifi='" . $filters[3] . "'";
+            }
+            if ($filters[4] != 0) {
+                $whereFilters = $whereFilters . " AND creditcard='" . $filters[4] . "'";
+            }
+            //workrange method
+            if ($order->service->queues) {
+                if ($order->service->qactive && count($order->service->queues) > 0) {
+                    $drivers = $order->service->queues;
+                }
+            } else {
+                $workRange = $order->office->settings['work_rang'];
+                $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? ' . $whereFilters . ' HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
+            }
+
+            $driverIDs = array_map(function ($value) {
+                return $value->id;
+            }, $drivers);
+            $driverHashs = array_map(function ($value) {
+                return $value->hash;
+            }, $drivers);
+
+            if ($driverIDs) {
+                if (count($driverIDs) > 0) {
+                    $order->subscribers()->sync($driverIDs);
+                    $order->status = 13;
+                } else {
+                    $order->status = 99;
+                }
+            }
+
+
+            $order->save();
+
+            return $driverHashs;
+        }
+        return false;
     }
 
     public function create(Request $request)
