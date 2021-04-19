@@ -420,7 +420,7 @@ class OrderController extends Controller
             return $newOrder->first();
         }
 
-        return false;
+        return response(0, 200);
     }
     public function getDriverFeed($hash)
     {

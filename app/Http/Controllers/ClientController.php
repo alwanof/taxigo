@@ -257,12 +257,15 @@ class ClientController extends Controller
                 $whereFilters = $whereFilters . " AND creditcard='" . $filters[4] . "'";
             }
             //workrange method
-            if ($order->service->qactive && count($order->service->queues) > 0) {
-                $drivers = $order->service->queues;
+            if ($order->service->queues) {
+                if ($order->service->qactive && count($order->service->queues) > 0) {
+                    $drivers = $order->service->queues;
+                }
             } else {
                 $workRange = $order->office->settings['work_rang'];
                 $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? ' . $whereFilters . ' HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $workRange]);
             }
+
             $driverIDs = array_map(function ($value) {
                 return $value->id;
             }, $drivers);
