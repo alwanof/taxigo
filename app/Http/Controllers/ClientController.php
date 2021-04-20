@@ -277,7 +277,7 @@ class ClientController extends Controller
                 $order->subscribers()->sync($driverIDs);
                 $order->status = 13;
             } else {
-                $order->status = 99;
+                $order->status = 91;
             }
             $order->save();
 

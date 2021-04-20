@@ -180,7 +180,17 @@ class OrderController extends Controller
                     $order->subscribers()->sync($driverIDs);
                     $order->status = 13;
                 } else {
-                    $order->status = 99;
+                    $driver = Driver::where([
+                        'busy' => 2,
+                        'user_id' => $order->user_id
+
+                    ])->inRandomOrder()->first();
+                    if ($driver) {
+                        $order->subscribers()->sync($driver);
+                        $order->status = 13;
+                    } else {
+                        $order->status = 93;
+                    }
                 }
             }
 
