@@ -413,6 +413,13 @@ class OrderController extends Controller
         return $order;
     }
 
+    public function getDriversOffice($officeEmail)
+    {
+        $office = User::where('email', $officeEmail)->first();
+        $drivers = Driver::where('user_id', $office->id)->get();
+        return response($drivers, 200);
+    }
+
     public function getDriverOrder($hash)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
