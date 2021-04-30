@@ -37,6 +37,7 @@
 
 <body class="@yield('bodyClass')">
     <div id="app">
+
         @yield('content')
     </div>
     <footer class="footer mt-auto py-3 bg-light">

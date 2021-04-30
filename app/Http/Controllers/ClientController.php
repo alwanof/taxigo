@@ -99,6 +99,7 @@ class ClientController extends Controller
     public function index(Request $request, $office_email = null)
     {
 
+
         if (!$office_email) {
             $ip = $this->get_ip($request);
             $response = Http::get('http://ip-api.com/php/' . $ip);

@@ -3,6 +3,7 @@
 @section('title', 'create')
 @section('bodyClass', 'd-flex flex-column h-100')
 @section('content')
+    @php $partner=1; @endphp
     <main class="flex-shrink-0">
         <div class="container pt-2">
             <div class="row">
@@ -10,19 +11,31 @@
                     <img src="/images/logo-sm.png" class="mx-auto d-block" height="100"
                         alt="{{ config('app.name', 'Project0') }}">
                     <!-- Logo area-->
-                    <div class="row mt-3">
-                        <div class="col-3">
-                            <img src="/storage/{{ $office->avatar }}" class="mx-auto d-block" width="93" alt="logo">
-                        </div>
-                        <div class="col-9 border-bottom p-2 px-3">
-                            <h4>{{ $office->name }}</h4>
-                            <a href="tel:{{ $office->settings['phone'] }}" class="btn btn-sm btn-success">
-                                <i class="fas fa-phone-alt"></i>
-                                {{ __('app.Call') }}
-                            </a>
+                    @if ($partner == 0)
+                        <div class="row mt-3">
+                            <div class="col-3">
+                                <img src="/storage/{{ $office->avatar }}" class="mx-auto d-block" width="93" alt="logo">
+                            </div>
+                            <div class="col-9 border-bottom p-2 px-3">
+                                <h3>{{ $office->name }}</h3>
+                                <a href="tel:{{ $office->settings['phone'] }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-phone-alt"></i>
+                                    {{ __('app.Call') }}
+                                </a>
 
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="row mt-3">
+
+                            <div class="col-12 border-bottom p-2 px-3">
+                                <h3 class=text-center>{{ $office->name }}</h3>
+
+
+                            </div>
+                        </div>
+
+                    @endif
                     <form action="{{ route('client.dist') }}" method="POST">
                         @csrf
                         <input type="hidden" name="from_lat" id="from_lat">
