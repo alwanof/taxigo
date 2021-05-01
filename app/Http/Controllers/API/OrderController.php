@@ -442,7 +442,10 @@ class OrderController extends Controller
     public function getDriverFeed($hash)
     {
         $driver = Driver::where('hash', $hash)->firstOrFail();
-        return $driver->requests()->where('status', 13)->first();
+        if ($driver->requests()->where('status', 13)->count() > 0) {
+            return response($driver->requests()->where('status', 13)->first(), 200);
+        }
+        return response(0, 200);
     }
 
     public function driverApproveOrder($hash, $order_id)
