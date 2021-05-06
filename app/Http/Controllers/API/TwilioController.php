@@ -29,7 +29,7 @@ class TwilioController extends Controller
             $phone_number,
             array(
                 'from' => $twilio_number,
-                'body' => 'Welcome To ' . env('APP_NAME') . ' , Your Verfication Code is : ' . $verification_code
+                'body' => 'Welcome To ' . env('APP_NAME', 'Marasiel') . ' , Your Verfication Code is : ' . $verification_code
             )
         );
 
