@@ -88,6 +88,7 @@ Route::get('/app/{hash}/toggle', 'API\DriverController@toggle');
 
 Route::get('/app/{hash}/reset', 'API\DriverController@reset');
 
+Route::get('/app/phone/verify/{phone}', 'API\TwilioController@index');
 // API OFFICE APP:
 
 Route::get('/oapp/init/{officeEmail}', 'API\OrderController@initOrder');
