@@ -15,9 +15,9 @@ class TwilioController extends Controller
      */
     public function index($phone_number)
     {
-        $account_sid = 'ACab7478cfb533e2dd22bd7013ac4923dd';
+        $account_sid = env('TWILIO_ID', 'NNN');
 
-        $auth_token = '6c21adb7ae94c4a0b73004a9a1ce30c5';
+        $auth_token = env('TWILIO_TOKEN', 'NNN');
 
         $twilio_number = "+17192154195";
 
