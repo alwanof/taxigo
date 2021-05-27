@@ -200,9 +200,11 @@ class DriverController extends Controller
     {
         $est_distance = 0;
         $est_time = 0;
+        $est_price = 0;
 
         $office = User::findOrFail($office);
-        $vehicle_id = Service::findOrFail($service)->vehicle_id;
+        $service = Service::findOrFail($service);
+        $vehicle_id = $service->vehicle_id;
         $workRange = $office->settings['work_rang'];
         //$driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=?  HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $workRange]);
         //$driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=? HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $vehicle_id, $workRange]);
@@ -223,10 +225,17 @@ class DriverController extends Controller
             $est_distance = $response['rows'][0]['elements'][0]['distance']['value'];
             $est_time = $response['rows'][0]['elements'][0]['duration']['value'];
         }
+
+        //Est Price
+        if ($service->service->plan == 'TRACK' || $service->service->plan == 'DRIVER') {
+            $estPrice = (($est_distance / 1000) * $service->distance) + (($est_time / 60) * $service->time) + $service->const;
+            $est_price = round($estPrice, 2);
+        }
         return [
             'driver' => $driver[0],
             'distance' => $est_distance,
-            'time' => $est_time
+            'time' => $est_time,
+            'estPrice'=> $est_price;
         ];
     }
 }
