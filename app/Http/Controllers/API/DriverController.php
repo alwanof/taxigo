@@ -196,11 +196,13 @@ class DriverController extends Controller
         return round($distance, 0);
     }
 
-    public function nearby($office, $lat, $lng, $service)
+    public function nearby($office, $lat, $lng, $dlat, $dlng,  $service)
     {
         $est_distance = 0;
         $est_time = 0;
-        $est_price = 0;
+        $jest_distance = 0;
+        $jest_time = 0;
+        $jest_price = 0;
 
         $office = User::findOrFail($office);
         $service = Service::findOrFail($service);
@@ -228,14 +230,41 @@ class DriverController extends Controller
 
         //Est Price
         if ($service->service->plan == 'TRACK' || $service->service->plan == 'DRIVER') {
-            $estPrice = (($est_distance / 1000) * $service->distance) + (($est_time / 60) * $service->time) + $service->const;
-            $est_price = round($estPrice, 2);
+            $est = $this->est_stuff($lat, $lng, $dlat, $dlng);
+            $jest_distance = $est['distance'];
+            $jest_time = $est['time'];
+            $jest_price = (($jest_distance / 1000) * $service->service->distance) + (($jest_time / 60) * $service->service->time) + $service->service->const;
         }
+
         return [
             'driver' => $driver[0],
             'distance' => $est_distance,
             'time' => $est_time,
-            'estPrice'=> $est_price;
+            'estDistance' => $jest_distance,
+            'estTime' => $jest_time,
+            'estPrice' => $jest_price
         ];
+    }
+
+    private function est_stuff($lat, $lng, $dlat, $dlng)
+    {
+        $data = [];
+        if ($lat != 0 && $lng != 0   && $dlat != 0  && $dlng != 0) {
+            $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+                'key' => 'AIzaSyBBygkRzIk31oyrn9qtVvQmxfdy-Fhjwz0',
+                'language' => 'en-US',
+                'mode' => 'DRIVING',
+                'origins' => $lat . ',' . $lng,
+                'destinations' => $dlat . ',' . $dlng,
+            ]);
+
+            if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
+                $data = [
+                    'distance' => $response['rows'][0]['elements'][0]['distance']['value'],
+                    'time' => $response['rows'][0]['elements'][0]['duration']['value'],
+                ];
+            }
+        }
+        return $data;
     }
 }
