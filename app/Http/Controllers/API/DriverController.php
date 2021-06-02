@@ -206,6 +206,7 @@ class DriverController extends Controller
 
         $office = User::findOrFail($office);
         $service = Service::findOrFail($service);
+
         $vehicle_id = $service->vehicle_id;
         $workRange = $office->settings['work_rang'];
         //$driver = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=?  HAVING distance < ? ORDER BY  distance ASC LIMIT 1', [$lat, $lng, $lat, $office->id, 2, $workRange]);
@@ -229,11 +230,12 @@ class DriverController extends Controller
         }
 
         //Est Price
-        if ($service->service->plan == 'TRACK' || $service->service->plan == 'DRIVER') {
+        if ($service->plan == 'TRACK' || $service->plan == 'DRIVER') {
             $est = $this->est_stuff($lat, $lng, $dlat, $dlng);
+            //return $est;
             $jest_distance = $est['distance'];
             $jest_time = $est['time'];
-            $jest_price = (($jest_distance / 1000) * $service->service->distance) + (($jest_time / 60) * $service->service->time) + $service->service->const;
+            $jest_price = (($jest_distance / 1000) * $service->distance) + (($jest_time / 60) * $service->time) + $service->const;
         }
 
         return [
@@ -242,7 +244,7 @@ class DriverController extends Controller
             'time' => $est_time,
             'estDistance' => $jest_distance,
             'estTime' => $jest_time,
-            'estPrice' => $jest_price
+            'estPrice' => round($jest_price, 2)
         ];
     }
 
@@ -257,6 +259,7 @@ class DriverController extends Controller
                 'origins' => $lat . ',' . $lng,
                 'destinations' => $dlat . ',' . $dlng,
             ]);
+
 
             if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
                 $data = [
