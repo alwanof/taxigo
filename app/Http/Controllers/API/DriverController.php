@@ -259,6 +259,7 @@ class DriverController extends Controller
                 'origins' => $lat . ',' . $lng,
                 'destinations' => $dlat . ',' . $dlng,
             ]);
+            Log::info($response);
 
 
             if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
