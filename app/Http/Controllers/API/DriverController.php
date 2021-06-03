@@ -232,7 +232,7 @@ class DriverController extends Controller
         //Est Price
         if ($service->plan == 'TRACK' || $service->plan == 'DRIVER') {
             $est = $this->est_stuff($lat, $lng, $dlat, $dlng);
-            //return $est;
+
             $jest_distance = $est['distance'];
             $jest_time = $est['time'];
             $jest_price = (($jest_distance / 1000) * $service->distance) + (($jest_time / 60) * $service->time) + $service->const;
@@ -259,7 +259,8 @@ class DriverController extends Controller
                 'origins' => $lat . ',' . $lng,
                 'destinations' => $dlat . ',' . $dlng,
             ]);
-            Log::info($response);
+
+
 
 
             if ($response['status'] == 'OK' && $response['rows'][0]['elements'][0]['status'] == 'OK') {
