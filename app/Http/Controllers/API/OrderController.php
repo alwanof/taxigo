@@ -269,15 +269,30 @@ class OrderController extends Controller
 
     public function cancel($order)
     {
+
         $order = Order::find($order);
+        $driver = Driver::find($order->driver_id);
+        $driver->busy = 2;
+        $driver->save();
+
         $order->status = 99;
+        $order->driver_id = null;
         $order->save();
+
         Stream::create([
             'pid' => $order->id,
             'model' => 'Order',
             'action' => 'U',
-            'meta' => ['office' => $order->user_id, 'agent' => $order->parent, 'action' => 'cancel']
+            'meta' => ['hash' => $driver->hash, 'office' => $order->user_id, 'agent' => $order->parent, 'action' => 'cancel']
         ]);
+
+        Stream::create([
+            'pid' => $driver->id,
+            'model' => 'Driver',
+            'action' => 'U',
+            'meta' => ['hash' => $driver->hash, 'office' => $driver->user_id, 'agent' => $driver->parent, 'action' => 'cancel']
+        ]);
+
         return $order;
     }
 
