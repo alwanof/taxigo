@@ -1,7 +1,9 @@
 <?php
 
-
+use App\Order;
+use App\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,8 +21,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/testoo', function () {
-    return 9;
+Route::get('/testoo/{id}', function ($id) {
+    $order = Order::find($id);
+    $VID = Service::find($order->service_id)->vehicle_id;
+    $workRange = $order->office->settings['work_rang'];
+    $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=? ' . $whereFilters . ' HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $VID, $workRange]);
+    return $drivers;
 });
 
 
