@@ -22,11 +22,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/testoo/{id}', function ($id) {
+    $res = [];
     $order = Order::find($id);
+    $res['order'] = $order;
     $VID = Service::find($order->service_id)->vehicle_id;
+    $res['VID'] = $VID;
     $workRange = $order->office->settings['work_rang'];
+    $res['workRange'] = $workRange;
     $drivers = DB::select('SELECT *, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance FROM drivers where user_id=? AND busy=? AND vehicle_id=? HAVING distance < ?', [$order->from_lat, $order->from_lng, $order->from_lat, $order->user_id, 2, $VID, $workRange]);
-    return $drivers;
+    $res['drivers'] = $drivers;
+    return $res;
 });
 
 
