@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.front',['lang'=>true])
 
 @section('title', 'create')
 @section('bodyClass', 'd-flex flex-column h-100')
@@ -212,7 +212,8 @@
                         <!-- /Modal -->
                         <div class="row mt-3">
                             <div class="col-10 d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">{{ __('app.Continue') }}</button>
+                                <button type="submit" id="continue" disabled
+                                    class="btn btn-primary">{{ __('app.Continue') }}</button>
                             </div>
                             <div class="col-2">
                                 <button type="submit" class="btn btn-light" data-bs-toggle="modal"
@@ -303,7 +304,7 @@
                 $("#loading").show();
                 var locc = lp.getMarkerPosition();
 
-                $.get("/api/nearby/" + office.id + "/" + locc.lat + "/" + locc.lng + "/" + $(this)
+                $.get("/api/drivers/nearby/" + office.id + "/" + locc.lat + "/" + locc.lng + "/" + $(this)
                     .val(),
                     function(data, status) {
                         $("#estTime").text('UNKnown');
@@ -311,6 +312,11 @@
                             $("#estTime").text(Math.round(data.time / 60) + 'min');
                         }
                         $("#loading").hide();
+                        if ($("#estTime").text() != 'UNKnown') {
+                            $('#continue').prop('disabled', false);
+                        } else {
+                            $('#continue').prop('disabled', true);
+                        }
                     });
             });
 

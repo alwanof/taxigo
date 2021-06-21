@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.front',['lang'=>false])
 
 @section('title', 'create')
 @section('bodyClass', 'd-flex flex-column h-100')
@@ -45,7 +45,7 @@
 
     <style>
         /* Custom page CSS
-              -------------------------------------------------- */
+                  -------------------------------------------------- */
         /* Not required for template or sticky footer method. */
 
         .container {

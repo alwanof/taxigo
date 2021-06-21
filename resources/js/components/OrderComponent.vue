@@ -8,6 +8,9 @@
                 <span class="text-warning mx-3">
                   <i :class="statusIcon(feed.status)"></i> {{statusLabel(feed.status)}}
                 </span>
+                <span class="spinner-grow text-warning" v-if="feed.status==0" role="status">
+                    <span class="sr-only">...</span>
+                </span>
               </div>
             </div>
             <div class="row p-2 mt-3">

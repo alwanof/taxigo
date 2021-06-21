@@ -48,6 +48,8 @@
 
                 </div>
                 <div class="col-4">
+                    @if ($lang)
+
                     <select class="form-select" id="lang" aria-label="Default select example">
                     <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
                         🇺🇸
@@ -58,6 +60,8 @@
                         عربي
                     </option>
                     </select>
+                    @endif
+
                 </div>
                 </div>
             </div>

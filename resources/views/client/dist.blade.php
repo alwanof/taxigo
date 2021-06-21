@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.front',['lang'=>false])
 
 @section('title', 'create')
 @section('bodyClass', 'd-flex flex-column h-100')
@@ -51,8 +51,8 @@
                             <label for="from_address" class="form-label text-muted">{{ __('app.Destination') }}</label>
                             <div class="input-group">
                                 <input type="text" class="form-control"
-                                    placeholder="{{ __('app.Enter your Distination') }}" id="to_address" name="to_address"
-                                    required>
+                                    placeholder="{{ __('app.Enter your Distination') }}" id="to_address"
+                                    name="to_address" required>
                                 <button class="btn btn-outline-secondary" type="button" id="confirmDist">
                                     <i class="fas fa-map-marker-alt"></i>
                                 </button>
@@ -93,13 +93,24 @@
 
             var defaultLat = {!! json_encode($mapCenter[0]) !!};
             var defaultLng = {!! json_encode($mapCenter[1]) !!};
+
             var lp = new locationPicker('dist', {
                 setCurrentPosition: true, // You can omit this, defaults to true
                 lat: defaultLat,
                 lng: defaultLng
 
             }, {
-                zoom: 15 // You can set any google map options here, zoom defaults to 15
+                zoom: 15,
+                gestureHandling: "greedy",
+                mapTypeControl: false,
+                draggable: true,
+                disableDefaultUI: true,
+                zoomControl: false,
+                styles: [{
+                    stylers: [{
+                        saturation: -100
+                    }]
+                }]
             });
 
 
@@ -142,7 +153,7 @@
         }
 
         /* Custom page CSS
-                                  -------------------------------------------------- */
+                                                  -------------------------------------------------- */
         /* Not required for template or sticky footer method. */
 
         .container {

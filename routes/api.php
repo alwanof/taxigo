@@ -66,7 +66,7 @@ Route::get('/order/office/select/{driver}/to/{order}', 'API\OrderController@sele
 
 Route::get('/order/office/send/{offer}/to/{order}', 'API\OrderController@sendOffer');
 Route::get('/nearby/{office}/{lat}/{lng}/{dlat}/{dlng}/{service}', 'API\DriverController@nearby'); //new
-
+Route::get('drivers/nearby/{office}/{lat}/{lng}/{service}', 'API\DriverController@driversNearby');
 
 // API Mobile APP:
 
