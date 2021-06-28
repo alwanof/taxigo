@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,8 +22,43 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function (Request $request) {
-    abort(403);
+Route::group(['middleware' => 'lang'], function () {
+    Route::get('/', function () {
+        $lang = session()->get('lang') ?? 'en';
+        $path = "storage/json/" . $lang . ".json"; // ie: /var/www/laravel/app/storage/json/filename.json
+        if (!File::exists($path)) {
+            throw new Exception("Invalid Data File");
+        }
+        $data = json_decode(
+            File::get($path),
+            true
+        ); // string
+        return view('templates.default.home', compact('data', 'lang'));
+    });
+
+    Route::get('/page/{slug}', function ($slug) {
+        $lang = session()->get('lang') ?? 'en';
+        $path = "storage/json/" . $lang . ".json"; // ie: /var/www/laravel/app/storage/json/filename.json
+        if (!File::exists($path)) {
+            throw new Exception("Invalid Data File");
+        }
+        $data = json_decode(File::get($path), true); // string
+        if (!array_key_exists($slug, $data['pages'])) {
+            abort(404);
+        }
+        return view('templates.default.page', compact('data', 'lang', 'slug'));
+    });
+
+    Route::get('/contact', function () {
+        $lang = session()->get('lang') ?? 'en';
+        $path = "storage/json/" . $lang . ".json"; // ie: /var/www/laravel/app/storage/json/filename.json
+        if (!File::exists($path)) {
+            throw new Exception("Invalid Data File");
+        }
+        $data = json_decode(File::get($path), true); // string
+
+        return view('templates.default.contact', compact('data', 'lang'));
+    });
 });
 Route::get('/foo', function (Request $request) {
     $response = Http::get('http://ip-api.com/php/24.48.0.1');
